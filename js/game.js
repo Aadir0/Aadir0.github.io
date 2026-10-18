@@ -189,6 +189,10 @@ class BoxerRig {
     this.hurtTimer = 0;
     this.animTime = Math.random() * 5;
 
+    // Punch Cooldown management
+    this.punchCooldown = 0;
+    this.maxCooldown = isAI ? (isHardcore ? 0.38 : 0.65) : 0.38;
+
     this.root = new THREE.Group();
     this.buildBoxer();
     this.scene.add(this.root);
@@ -332,10 +336,15 @@ class BoxerRig {
     this.isHurt = true;
     this.hurtTimer = heavy ? 0.26 : 0.18;
 
+    // Recoil backward on impact
+    this.x += -this.facing * (heavy ? 0.35 : 0.2);
+    this.x = Math.max(-4.2, Math.min(4.2, this.x));
+    if (this.chest) this.chest.rotation.x = -0.32;
+
     this.chest.material.color.setHex(0xFFFFFF);
     setTimeout(() => {
       if (this.chest) {
-        this.chest.material.color.setHex(this.isAI ? 0xE2AA68 : 0xD5A272);
+        this.chest.material.color.setHex(this.isAI ? (this.isHardcore ? 0x991B1B : 0xE2AA68) : 0xD5A272);
       }
     }, 70);
 
@@ -346,15 +355,21 @@ class BoxerRig {
   }
 
   punch() {
-    if (this.isAttacking || this.isHurt || this.isDead || this.isBlocking) return;
+    if (this.isAttacking || this.isHurt || this.isDead || this.isBlocking || this.punchCooldown > 0) return false;
     this.isAttacking = true;
+    this.punchCooldown = this.maxCooldown;
     this.attackTimer = 0.22;
     this.punchHand = this.punchHand === 'right' ? 'left' : 'right';
     audioFX.playWhoosh();
+    return true;
   }
 
   update(dt) {
     this.animTime += dt;
+
+    if (this.punchCooldown > 0) {
+      this.punchCooldown = Math.max(0, this.punchCooldown - dt);
+    }
 
     if (!this.isGrounded) {
       this.vy -= 26 * dt;
@@ -377,23 +392,25 @@ class BoxerRig {
         this.armL.position.set(-0.62, 0.15, 0.1);
         this.armR.rotation.set(0, 0, 0);
         this.armL.rotation.set(0, 0, 0);
+        this.chest.rotation.y = 0;
       } else {
         const p = Math.sin((this.attackTimer / 0.22) * Math.PI);
         if (this.punchHand === 'right') {
-          this.armR.position.z = 0.1 + p * 1.15;
-          this.armR.position.y = 0.15 + p * 0.2;
-          this.armR.rotation.y = -p * 0.4;
+          this.armR.position.z = 0.1 + p * 1.3;
+          this.armR.position.y = 0.15 + p * 0.18;
+          this.armR.rotation.y = -p * 0.45;
+          this.chest.rotation.y = -p * 0.22;
         } else {
-          this.armL.position.z = 0.1 + p * 1.15;
-          this.armL.position.y = 0.15 + p * 0.2;
-          this.armL.rotation.y = p * 0.4;
+          this.armL.position.z = 0.1 + p * 1.3;
+          this.armL.position.y = 0.15 + p * 0.18;
+          this.armL.rotation.y = p * 0.45;
+          this.chest.rotation.y = p * 0.22;
         }
       }
     }
 
     if (this.isHurt) {
       this.hurtTimer -= dt;
-      this.chest.rotation.x = 0.35;
       if (this.hurtTimer <= 0) {
         this.isHurt = false;
         this.chest.rotation.x = 0;
@@ -408,11 +425,15 @@ class BoxerRig {
       this.chest.position.y = 1.95 + bounce;
 
       if (this.isBlocking) {
-        this.armR.position.set(0.28, 0.5, 0.48);
-        this.armL.position.set(-0.28, 0.5, 0.48);
+        this.armR.position.set(0.24, 0.52, 0.48);
+        this.armL.position.set(-0.24, 0.52, 0.48);
+        this.armR.rotation.z = -0.3;
+        this.armL.rotation.z = 0.3;
       } else {
         this.armR.position.set(0.48, 0.4 + bounce * 0.6, 0.38);
         this.armL.position.set(-0.48, 0.4 - bounce * 0.6, 0.38);
+        this.armR.rotation.z = 0;
+        this.armL.rotation.z = 0;
       }
 
       if (Math.abs(this.vx) > 0.1) {
@@ -548,14 +569,27 @@ class ArenaFightingGame {
     const ropeMat = new THREE.MeshStandardMaterial({ color: 0xF8FAFC, roughness: 0.3 });
 
     ropeHeights.forEach(rh => {
+      // Back rope
       const ropeGeoH = new THREE.BoxGeometry(10.6, 0.05, 0.05);
-      const ropeFront = new THREE.Mesh(ropeGeoH, ropeMat);
-      ropeFront.position.set(0, rh, 5.3);
-      this.scene.add(ropeFront);
-
       const ropeBack = new THREE.Mesh(ropeGeoH, ropeMat);
       ropeBack.position.set(0, rh, -5.3);
       this.scene.add(ropeBack);
+
+      // Side ropes (Left and Right)
+      const ropeGeoSide = new THREE.BoxGeometry(0.05, 0.05, 10.6);
+      const ropeLeft = new THREE.Mesh(ropeGeoSide, ropeMat);
+      ropeLeft.position.set(-5.3, rh, 0);
+      this.scene.add(ropeLeft);
+
+      const ropeRight = new THREE.Mesh(ropeGeoSide, ropeMat);
+      ropeRight.position.set(5.3, rh, 0);
+      this.scene.add(ropeRight);
+
+      // Front rope is semi-transparent so it never blocks the camera view of the fighters
+      const frontRopeMat = new THREE.MeshBasicMaterial({ color: 0xF8FAFC, transparent: true, opacity: 0.1 });
+      const ropeFront = new THREE.Mesh(ropeGeoH, frontRopeMat);
+      ropeFront.position.set(0, rh, 5.3);
+      this.scene.add(ropeFront);
     });
   }
 
@@ -698,31 +732,55 @@ class ArenaFightingGame {
     btn.addEventListener('pointercancel', endHandler);
   }
 
-  activateHardcoreMode() {
-    if (this.isHardcore) return;
+  activateHardcoreMode(forceImmediate = true) {
     this.isHardcore = true;
+    audioFX.isMuted = false;
+    audioFX.init();
     audioFX.playHardcoreRoar();
 
-    // Rebuild enemy in Hardcore Boss Form
-    this.scene.remove(this.enemy.root);
+    // Rebuild enemy in Hardcore Raged Boss Form
+    if (this.enemy && this.enemy.root) {
+      this.scene.remove(this.enemy.root);
+    }
     this.enemy = new BoxerRig(this.scene, true, true);
     this.enemy.x = 2.8;
 
     const enemyName = document.getElementById('enemyNameLabel');
     if (enemyName) {
-      enemyName.innerHTML = `<span style="color: #EF4444;">🔥</span> Aaditya Raj (BOSS)`;
+      enemyName.innerHTML = `<span style="color: #EF4444; font-size: 1rem;">🔥</span> Aaditya Raj (BOSS)`;
     }
 
     const banner = document.getElementById('hardcoreBannerToast');
     if (banner) {
+      banner.innerHTML = `🔥 RAGED BOSS MODE ACTIVATED 🔥`;
       banner.classList.remove('hidden');
-      setTimeout(() => banner.classList.add('hidden'), 3500);
+      setTimeout(() => banner.classList.add('hidden'), 4500);
+    }
+
+    // Bring fight screen back to view immediately if user was on website
+    const root = document.getElementById('fightScreenRoot');
+    if (root) {
+      root.style.display = 'block';
+      root.classList.remove('dismissed');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Resume animation frame loop if stopped
+    if (!this.animFrameId) {
+      this.animate = this.animate.bind(this);
+      this.animFrameId = requestAnimationFrame(this.animate);
+    }
+
+    // Start fight immediately into raged gameplay
+    if (forceImmediate) {
+      this.startFight();
     }
   }
 
   triggerPlayerPunch() {
-    if (this.player.isAttacking || this.player.isDead) return;
-    this.player.punch();
+    if (!this.player || this.player.isDead || this.player.punchCooldown > 0) return;
+    const didPunch = this.player.punch();
+    if (!didPunch) return;
     const damage = Math.floor(Math.random() * 5) + 14;
     this.checkHit(this.player, this.enemy, damage, 'JAB!');
   }
@@ -796,11 +854,13 @@ class ArenaFightingGame {
 
     this.player.hp = 100;
     this.player.isDead = false;
+    this.player.punchCooldown = 0;
     this.player.x = -2.8;
     this.player.root.rotation.z = 0;
 
     this.enemy.hp = 100;
     this.enemy.isDead = false;
+    this.enemy.punchCooldown = 0;
     this.enemy.x = 2.8;
     this.enemy.root.rotation.z = 0;
 
@@ -822,6 +882,30 @@ class ArenaFightingGame {
     audioFX.playVictory();
 
     const winOv = document.getElementById('fightWinOverlay');
+    const winTitle = document.getElementById('winTitleText');
+    const winSubtitle = document.getElementById('winSubtitleText');
+
+    if (this.isHardcore) {
+      if (winTitle) {
+        winTitle.innerHTML = `👑 GODLIKE! BOSS CONQUERED!`;
+        winTitle.style.color = '#F59E0B';
+      }
+      if (winSubtitle) {
+        winSubtitle.innerHTML = `Incredible! You defeated <strong>Aaditya Raj (AI)</strong> in Raged Boss Mode. You have unlocked champion status!`;
+      }
+      document.body.classList.add('boss-champion');
+      const badge = document.getElementById('bossAchievementBanner');
+      if (badge) badge.classList.remove('hidden');
+    } else {
+      if (winTitle) {
+        winTitle.textContent = `K.O.! YOU WIN!`;
+        winTitle.style.color = '#22C55E';
+      }
+      if (winSubtitle) {
+        winSubtitle.textContent = `Flawless fight. Welcome to Aaditya Raj's portfolio website.`;
+      }
+    }
+
     if (winOv) winOv.classList.remove('hidden');
   }
 
@@ -837,14 +921,32 @@ class ArenaFightingGame {
   updateHUD() {
     const playerBar = document.getElementById('playerHpFill');
     const enemyBar = document.getElementById('enemyHpFill');
+    const playerHpLag = document.getElementById('playerHpLag');
+    const enemyHpLag = document.getElementById('enemyHpLag');
     const playerHpText = document.getElementById('playerHpVal');
     const enemyHpText = document.getElementById('enemyHpVal');
+    const cdBar = document.getElementById('playerCdFill');
 
-    if (playerBar) playerBar.style.width = `${Math.floor(this.player.hp)}%`;
-    if (enemyBar) enemyBar.style.width = `${Math.floor(this.enemy.hp)}%`;
+    const pPercent = Math.max(0, Math.floor(this.player.hp));
+    const ePercent = Math.max(0, Math.floor(this.enemy.hp));
 
-    if (playerHpText) playerHpText.textContent = Math.floor(this.player.hp);
-    if (enemyHpText) enemyHpText.textContent = Math.floor(this.enemy.hp);
+    if (playerBar) playerBar.style.width = `${pPercent}%`;
+    if (enemyBar) enemyBar.style.width = `${ePercent}%`;
+    if (playerHpLag) playerHpLag.style.width = `${pPercent}%`;
+    if (enemyHpLag) enemyHpLag.style.width = `${ePercent}%`;
+
+    if (playerHpText) playerHpText.textContent = pPercent;
+    if (enemyHpText) enemyHpText.textContent = ePercent;
+
+    if (cdBar && this.player) {
+      const cdPercent = Math.max(0, Math.min(100, (1 - (this.player.punchCooldown / this.player.maxCooldown)) * 100));
+      cdBar.style.width = `${cdPercent}%`;
+      if (cdPercent >= 98) {
+        cdBar.classList.add('ready');
+      } else {
+        cdBar.classList.remove('ready');
+      }
+    }
   }
 
   destroy() {
@@ -865,6 +967,8 @@ class ArenaFightingGame {
     const dt = Math.min(this.clock.getDelta(), 0.1);
 
     if (this.isPlaying) {
+      this.updateHUD();
+
       const moveSpeed = 5.2;
       if (this.keys.left && !this.player.isBlocking) {
         this.player.vx = -moveSpeed;
@@ -911,8 +1015,8 @@ class ArenaFightingGame {
     const dist = Math.abs(this.enemy.x - this.player.x);
     this.aiTimer += dt;
 
-    const speed = this.isHardcore ? 3.8 : 2.7;
-    if (dist > 1.8) {
+    const speed = this.isHardcore ? 4.2 : 2.8;
+    if (dist > 1.85) {
       this.enemy.vx = (this.player.x < this.enemy.x) ? -speed : speed;
     } else {
       this.enemy.vx = 0;
@@ -920,23 +1024,26 @@ class ArenaFightingGame {
 
     if (this.aiTimer > this.aiNextAction) {
       this.aiTimer = 0;
-      this.aiNextAction = (this.isHardcore ? 0.5 : 0.75) + Math.random() * 0.4;
+      this.aiNextAction = (this.isHardcore ? 0.42 : 0.75) + Math.random() * 0.35;
 
-      if (dist < 2.05) {
+      if (dist < 2.15 && this.enemy.punchCooldown <= 0) {
         const roll = Math.random();
 
-        if (roll > 0.3) {
-          this.enemy.punch();
-          const dmg = (this.isHardcore ? 18 : 13) + Math.floor(Math.random() * 4);
-          this.checkHit(this.enemy, this.player, dmg, this.isHardcore ? 'BOSS HOOK!' : 'JAB!');
+        if (roll > (this.isHardcore ? 0.2 : 0.35)) {
+          const didPunch = this.enemy.punch();
+          if (didPunch) {
+            const dmg = (this.isHardcore ? 19 : 13) + Math.floor(Math.random() * 4);
+            this.checkHit(this.enemy, this.player, dmg, this.isHardcore ? 'BOSS HOOK!' : 'JAB!');
 
-          if (this.isHardcore && Math.random() > 0.4) {
-            setTimeout(() => {
-              if (this.enemy && !this.enemy.isDead && this.isPlaying) {
-                this.enemy.punch();
-                this.checkHit(this.enemy, this.player, 16, 'CROSS!');
-              }
-            }, 200);
+            if (this.isHardcore && Math.random() > 0.45) {
+              setTimeout(() => {
+                if (this.enemy && !this.enemy.isDead && this.isPlaying) {
+                  this.enemy.punchCooldown = 0;
+                  this.enemy.punch();
+                  this.checkHit(this.enemy, this.player, 16, 'CROSS!');
+                }
+              }, 220);
+            }
           }
         } else {
           this.enemy.isBlocking = true;
@@ -955,11 +1062,14 @@ class ArenaFightingGame {
   window.addEventListener('keydown', (e) => {
     if (e.key && e.key.length === 1) {
       secretBuffer += e.key.toLowerCase();
-      if (secretBuffer.length > 30) secretBuffer = secretBuffer.slice(-30);
+      if (secretBuffer.length > 35) secretBuffer = secretBuffer.slice(-35);
       if (secretBuffer.includes('ihatecholebhature')) {
         secretBuffer = '';
         if (window.fightGame) {
-          window.fightGame.activateHardcoreMode();
+          window.fightGame.activateHardcoreMode(true);
+        } else if (typeof ArenaFightingGame !== 'undefined' && document.getElementById('fightCanvas')) {
+          window.fightGame = new ArenaFightingGame('fightCanvas');
+          window.fightGame.activateHardcoreMode(true);
         }
       }
     }

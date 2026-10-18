@@ -719,6 +719,9 @@ a {
 /* ==========================================================================
    Full-Screen 3D Boxing Game (Entrance Experience)
    ========================================================================== */
+/* ==========================================================================
+   Full-Screen 3D Boxing Game (Entrance Experience)
+   ========================================================================== */
 .fighter-screen {
   position: fixed;
   inset: 0;
@@ -730,6 +733,16 @@ a {
   flex-direction: column;
   overflow: hidden;
   transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* Complete prevention of browser text selection / highlighting in game */
+.fighter-screen,
+.fighter-screen * {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
 }
 
 .fighter-screen.dismissed {
@@ -746,55 +759,94 @@ a {
   display: block;
 }
 
-/* Top HUD: Health Bars */
+/* Top HUD: Health Bars & Punch Cooldown */
 .fight-top-hud {
   position: absolute;
-  top: 24px;
-  left: 30px;
-  right: 30px;
+  top: 20px;
+  left: 24px;
+  right: 24px;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  gap: 2rem;
+  gap: 1.75rem;
   z-index: 10;
   pointer-events: none;
 }
 
 .fighter-hud-card {
+  background: rgba(13, 17, 28, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 0.75rem 1.15rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
 }
 
 .fighter-hud-card.enemy {
-  align-items: flex-end;
+  align-items: stretch;
 }
 
 .fighter-name-tag {
   font-family: var(--font-code);
-  font-size: 0.9rem;
-  font-weight: 700;
+  font-size: 0.875rem;
+  font-weight: 800;
   color: #FFFFFF;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: space-between;
+}
+
+.fighter-tag-dot {
+  font-size: 0.75rem;
+  margin-right: 0.35rem;
+}
+
+.fighter-tag-dot.blue {
+  color: #38BDF8;
+  text-shadow: 0 0 10px #38BDF8;
+}
+
+.fighter-tag-dot.orange {
+  color: #F59E0B;
+  text-shadow: 0 0 10px #F59E0B;
 }
 
 .hp-bar-track {
   width: 100%;
-  height: 20px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  height: 16px;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
   overflow: hidden;
   position: relative;
 }
 
+.hp-bar-lag {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: #EF4444;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.12s;
+}
+
+.hp-bar-lag.enemy {
+  margin-left: auto;
+}
+
 .hp-bar-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
   height: 100%;
   background: linear-gradient(90deg, #0284C7, #38BDF8);
-  transition: width 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: width 0.12s ease-out;
 }
 
 .hp-bar-fill.enemy-hp {
@@ -802,23 +854,62 @@ a {
   margin-left: auto;
 }
 
+/* Punch Cooldown Gauge under Player HUD */
+.hud-cd-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-top: 0.15rem;
+}
+
+.cd-track {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.cd-fill {
+  height: 100%;
+  background: #0284C7;
+  transition: width 0.05s linear;
+}
+
+.cd-fill.ready {
+  background: #10B981;
+  box-shadow: 0 0 8px #10B981;
+}
+
+.cd-label {
+  font-family: var(--font-code);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #64748B;
+  letter-spacing: 0.05em;
+}
+
 .vs-badge {
   font-family: var(--font-code);
   font-weight: 900;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   color: #F59E0B;
-  background: rgba(0, 0, 0, 0.7);
-  padding: 0.35rem 0.85rem;
-  border: 1px solid rgba(245, 158, 11, 0.5);
-  box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+  background: radial-gradient(circle, #1E293B, #0F172A);
+  padding: 0.45rem 1rem;
+  border: 1.5px solid rgba(245, 158, 11, 0.6);
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.35);
+  text-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+  letter-spacing: 0.05em;
 }
 
 /* Combat Instructions HUD */
 .fight-bottom-hud {
   position: absolute;
-  bottom: 24px;
-  left: 30px;
-  right: 30px;
+  bottom: 20px;
+  left: 24px;
+  right: 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -828,14 +919,16 @@ a {
 
 .fight-key-guide {
   display: flex;
-  gap: 1.25rem;
-  background: rgba(8, 11, 16, 0.85);
-  padding: 0.75rem 1.35rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  gap: 1rem;
+  background: rgba(13, 17, 28, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 0.65rem 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
   font-family: var(--font-code);
-  font-size: 0.825rem;
-  color: #E2E8F0;
-  backdrop-filter: blur(8px);
+  font-size: 0.8rem;
+  color: #CBD5E1;
 }
 
 .key-tag {
@@ -846,26 +939,33 @@ a {
 .btn-skip-fight {
   pointer-events: auto;
   font-family: var(--font-code);
-  font-size: 0.85rem;
+  font-size: 0.825rem;
+  font-weight: 600;
   color: #CBD5E1;
-  background: rgba(8, 11, 16, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  padding: 0.75rem 1.35rem;
+  background: rgba(13, 17, 28, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  padding: 0.65rem 1.35rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .btn-skip-fight:hover {
   color: #FFFFFF;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.12);
   border-color: #FFFFFF;
+  transform: translateY(-1px);
 }
 
 /* Overlays */
 .fight-screen-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(8, 11, 16, 0.86);
+  background: radial-gradient(circle at center, rgba(15, 23, 42, 0.88) 0%, rgba(8, 11, 16, 0.96) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -880,35 +980,167 @@ a {
   display: none;
 }
 
-.fight-btn-action {
-  font-family: var(--font-primary);
+.fight-modal-box {
+  background: rgba(13, 17, 28, 0.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 2.75rem 3.25rem;
+  max-width: 580px;
+  width: 92%;
+  box-shadow: 0 25px 65px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  text-align: center;
+}
+
+.fight-pill-tag {
+  display: inline-block;
+  font-family: var(--font-code);
+  font-size: 0.725rem;
   font-weight: 700;
+  color: #F59E0B;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  padding: 0.25rem 0.85rem;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.85rem;
+}
+
+.fight-pill-tag.win-tag {
+  color: #22C55E;
+  background: rgba(34, 197, 94, 0.12);
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
+.fight-pill-tag.lose-tag {
+  color: #EF4444;
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.fight-title-hero {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.6rem;
+  line-height: 1.15;
+}
+
+.fight-title-hero.win-title {
+  color: #22C55E;
+  text-shadow: 0 0 25px rgba(34, 197, 94, 0.5);
+}
+
+.fight-title-hero.lose-title {
+  color: #EF4444;
+  text-shadow: 0 0 25px rgba(239, 68, 68, 0.5);
+}
+
+.fight-subtitle-hero {
+  font-size: 1rem;
+  color: #94A3B8;
+  line-height: 1.6;
+  margin-bottom: 1.85rem;
+  max-width: 440px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.fight-btn-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  font-family: var(--font-display);
   font-size: 1.05rem;
-  padding: 0.9rem 2.5rem;
-  background: var(--accent-amber);
+  font-weight: 800;
+  background: linear-gradient(135deg, #B8500C, #EA580C);
   color: #FFFFFF;
   border: none;
+  border-radius: 12px;
+  padding: 0.95rem 2.6rem;
   cursor: pointer;
-  margin-top: 1.25rem;
   letter-spacing: 0.02em;
-  transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
-  box-shadow: 0 4px 20px rgba(184, 80, 12, 0.4);
+  box-shadow: 0 6px 25px rgba(234, 88, 12, 0.45);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
 }
 
 .fight-btn-action:hover {
   transform: translateY(-2px);
-  background: #C2410C;
-  box-shadow: 0 6px 24px rgba(184, 80, 12, 0.6);
+  box-shadow: 0 10px 32px rgba(234, 88, 12, 0.65);
+  filter: brightness(1.08);
 }
 
 .fight-btn-action.win {
-  background: #16A34A;
-  box-shadow: 0 4px 20px rgba(22, 163, 74, 0.4);
+  background: linear-gradient(135deg, #16A34A, #10B981);
+  box-shadow: 0 6px 25px rgba(16, 185, 129, 0.45);
 }
 
 .fight-btn-action.win:hover {
-  background: #15803D;
-  box-shadow: 0 6px 24px rgba(22, 163, 74, 0.6);
+  box-shadow: 0 10px 32px rgba(16, 185, 129, 0.65);
+}
+
+.modal-buttons-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 1.25rem;
+}
+
+.btn-skip-secondary {
+  display: inline-block;
+  font-family: var(--font-code);
+  font-size: 0.85rem;
+  color: #94A3B8;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 0.85rem 1.6rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-skip-secondary:hover {
+  color: #FFFFFF;
+  border-color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.fight-pills-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.55rem;
+  margin-top: 1.85rem;
+}
+
+.ctrl-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  font-family: var(--font-code);
+  font-size: 0.75rem;
+  color: #CBD5E1;
+}
+
+.ctrl-pill kbd {
+  background: rgba(245, 158, 11, 0.18);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #F59E0B;
+  font-weight: 800;
+  font-size: 0.7rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
 }
 
 /* Floating Impact Damage Text */
@@ -1073,45 +1305,43 @@ a {
   margin-left: 0.5rem;
 }
 
-.fight-modal-box {
-  background: rgba(12, 14, 20, 0.92);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 2.5rem 3rem;
-  max-width: 580px;
-  backdrop-filter: blur(12px);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-  text-align: center;
-}
-
-.fight-title-hero {
-  font-family: 'Syne', var(--font-primary);
-  font-size: clamp(2.2rem, 5vw, 3.2rem);
-  font-weight: 900;
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.02em;
-}
-
-.fight-subtitle-hero {
-  font-size: 1.05rem;
-  color: #CBD5E1;
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
-}
-
-.fight-controls-guide-text {
-  margin-top: 1.5rem;
+/* Raged Boss Victory Achievement Banner */
+.boss-achievement-toast {
+  background: linear-gradient(90deg, #991B1B, #B45309, #D97706);
+  color: #FFFFFF;
   font-family: var(--font-code);
-  font-size: 0.825rem;
-  color: #94A3B8;
+  font-size: 0.85rem;
+  padding: 0.65rem 0;
+  box-shadow: 0 4px 20px rgba(180, 83, 9, 0.35);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  animation: slide-toast 0.4s ease-out;
+  position: relative;
+  z-index: 90;
 }
 
-.fight-controls-guide-text strong {
-  color: #F59E0B;
+.boss-achievement-toast.hidden {
+  display: none;
 }
 
-.easter-egg-hint {
-  font-family: var(--font-code);
-  font-size: 0.725rem;
-  color: #64748B;
-  margin-top: 0.85rem;
+.boss-achievement-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.achievement-pill {
+  background: #FEF3C7;
+  color: #92400E;
+  font-weight: 800;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes slide-toast {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }

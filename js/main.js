@@ -64,6 +64,8 @@ function initBoxingEntrance() {
 
     if (btnEnter) btnEnter.addEventListener('click', terminateAndEnter);
     if (btnSkip) btnSkip.addEventListener('click', terminateAndEnter);
+    const btnSkipFromLose = document.getElementById('btnSkipFromLose');
+    if (btnSkipFromLose) btnSkipFromLose.addEventListener('click', terminateAndEnter);
   }
 }
 

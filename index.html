@@ -29,20 +29,27 @@
 
     <!-- Hardcore Mode Banner Toast -->
     <div id="hardcoreBannerToast" class="hardcore-banner hidden">
-      🔥 HARDCORE BOSS MODE ACTIVATED 🔥
+      🔥 RAGED BOSS MODE ACTIVATED 🔥
     </div>
 
-    <!-- Top HUD: Health Bars -->
+    <!-- Top HUD: Health Bars & Cooldown Indicator -->
     <div class="fight-top-hud">
       <!-- Player Card: YOU -->
       <div class="fighter-hud-card">
         <div class="fighter-name-tag">
-          <span style="color: #38BDF8;">●</span>
-          <span>YOU</span>
+          <span class="fighter-tag-dot blue">●</span>
+          <span class="fighter-label">YOU</span>
           <span class="hp-val-wrap"><span id="playerHpVal">100</span> HP</span>
         </div>
         <div class="hp-bar-track">
+          <div id="playerHpLag" class="hp-bar-lag" style="width: 100%;"></div>
           <div id="playerHpFill" class="hp-bar-fill" style="width: 100%;"></div>
+        </div>
+        <div class="hud-cd-wrap">
+          <div class="cd-track">
+            <div id="playerCdFill" class="cd-fill ready" style="width: 100%;"></div>
+          </div>
+          <span class="cd-label">PUNCH PRIMED</span>
         </div>
       </div>
 
@@ -52,54 +59,67 @@
       <!-- AI Opponent: Aaditya Raj (HP is placed AFTER the name!) -->
       <div class="fighter-hud-card enemy">
         <div class="fighter-name-tag">
-          <span style="color: #F59E0B;">●</span>
-          <span id="enemyNameLabel">Aaditya Raj (AI)</span>
+          <span class="fighter-tag-dot orange">●</span>
+          <span id="enemyNameLabel" class="fighter-label">Aaditya Raj (AI)</span>
           <span class="hp-val-wrap"><span id="enemyHpVal">100</span> HP</span>
         </div>
         <div class="hp-bar-track">
+          <div id="enemyHpLag" class="hp-bar-lag enemy" style="width: 100%;"></div>
           <div id="enemyHpFill" class="hp-bar-fill enemy-hp" style="width: 100%;"></div>
         </div>
       </div>
     </div>
 
-    <!-- Start Overlay -->
+    <!-- Start Overlay (Arcade Glassmorphism Modal) -->
     <div id="fightStartOverlay" class="fight-screen-overlay">
       <div class="fight-modal-box">
-        <h1 class="fight-title-hero">BOXING SHOWDOWN</h1>
+        <div class="fight-pill-tag">3D BOXING ARENA</div>
+        <h1 class="fight-title-hero">SHOWDOWN</h1>
         <p class="fight-subtitle-hero">
-          Defeat <strong>Aaditya Raj</strong> in the 3D boxing ring to enter his developer portfolio!
+          Step into the ring with <strong>Aaditya Raj</strong>. Claim victory to unlock his developer portfolio!
         </p>
 
-        <button id="btnStartFight" class="fight-btn-action">START MATCH</button>
+        <button id="btnStartFight" class="fight-btn-action">
+          <span>START MATCH</span>
+          <span class="btn-icon">🥊</span>
+        </button>
 
-        <div class="fight-controls-guide-text">
-          <span><strong>A / D</strong> Move</span> • 
-          <span><strong>Space</strong> Jump</span> • 
-          <span><strong>Left Click</strong> Punch</span> • 
-          <span><strong>Right Click</strong> Block</span>
+        <div class="fight-pills-row">
+          <div class="ctrl-pill"><kbd>A</kbd><kbd>D</kbd><span>Move</span></div>
+          <div class="ctrl-pill"><kbd>SPACE</kbd><span>Jump</span></div>
+          <div class="ctrl-pill"><kbd>L-CLICK</kbd><span>Punch</span></div>
+          <div class="ctrl-pill"><kbd>R-CLICK</kbd><span>Block</span></div>
         </div>
       </div>
     </div>
 
     <!-- Victory Overlay -->
     <div id="fightWinOverlay" class="fight-screen-overlay hidden">
-      <div class="fight-modal-box">
-        <h1 class="fight-title-hero" style="color: #22C55E;">K.O.! YOU WIN!</h1>
-        <p class="fight-subtitle-hero">
+      <div class="fight-modal-box victory-box">
+        <div class="fight-pill-tag win-tag">VICTORY</div>
+        <h1 id="winTitleText" class="fight-title-hero win-title">K.O.! YOU WIN!</h1>
+        <p id="winSubtitleText" class="fight-subtitle-hero">
           Flawless fight. Welcome to Aaditya Raj's portfolio website.
         </p>
-        <button id="btnEnterFromFight" class="fight-btn-action win">Enter Website →</button>
+        <button id="btnEnterFromFight" class="fight-btn-action win">
+          <span>Enter Website</span>
+          <span class="btn-icon">→</span>
+        </button>
       </div>
     </div>
 
     <!-- Defeat Overlay -->
     <div id="fightLoseOverlay" class="fight-screen-overlay hidden">
-      <div class="fight-modal-box">
-        <h1 class="fight-title-hero" style="color: #EF4444;">KNOCKED OUT!</h1>
+      <div class="fight-modal-box defeat-box">
+        <div class="fight-pill-tag lose-tag">KNOCKED OUT</div>
+        <h1 class="fight-title-hero lose-title">DEFEATED!</h1>
         <p class="fight-subtitle-hero">
           Aaditya landed the counter punch. Rematch and claim victory!
         </p>
-        <button id="btnRetryFight" class="fight-btn-action">Rematch / Try Again</button>
+        <div class="modal-buttons-group">
+          <button id="btnRetryFight" class="fight-btn-action">Rematch / Try Again</button>
+          <button id="btnSkipFromLose" class="btn-skip-secondary">Skip to Website →</button>
+        </div>
       </div>
     </div>
 
@@ -108,7 +128,7 @@
       <div class="fight-key-guide">
         <span><strong class="key-tag">A / D</strong> Move</span>
         <span><strong class="key-tag">Space</strong> Jump</span>
-        <span><strong class="key-tag">Left Click</strong> Punch</span>
+        <span><strong class="key-tag">Left Click</strong> Punch (Cooldown)</span>
         <span><strong class="key-tag">Right Click</strong> Block</span>
       </div>
       <button id="btnSkipFight" class="btn-skip-fight">Skip to Website →</button>
@@ -145,6 +165,14 @@
       </nav>
     </div>
   </header>
+
+  <!-- Raged Boss Champion Banner (Unlocked only when defeating Aaditya Raj in Boss Mode) -->
+  <div id="bossAchievementBanner" class="boss-achievement-toast hidden">
+    <div class="container boss-achievement-inner">
+      <span>👑 <strong>RAGED BOSS CONQUEROR</strong>: You defeated Aaditya Raj in Hardcore Mode!</span>
+      <span class="achievement-pill">Champion</span>
+    </div>
+  </div>
 
   <!-- ==========================================================================
        1. About Section (Integrated Skills & Highlights)
