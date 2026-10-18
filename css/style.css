@@ -1,0 +1,1064 @@
+/* ==========================================================================
+   Aaditya Raj - Minimal Modern & Juicy Portfolio Stylesheet
+   Warm Linen & Cream, Micro-Animations, 3D Flip Banners, Boxing Arena
+   ========================================================================== */
+
+:root {
+  /* Warm Linen & Cream Palette */
+  --bg-main: #FAF7F0;
+  --bg-subtle: #F3EFE4;
+  --bg-white: #FFFFFF;
+  
+  --ink-heavy: #181512;
+  --ink-body: #4A4438;
+  --ink-light: #7E7566;
+  --ink-faint: #B5AC9E;
+  
+  --line-soft: rgba(24, 21, 18, 0.07);
+  --line-medium: rgba(24, 21, 18, 0.14);
+  --line-hard: rgba(24, 21, 18, 0.28);
+  
+  --accent-amber: #B8500C; /* Terracotta Amber */
+  --accent-amber-glow: rgba(184, 80, 12, 0.12);
+  --accent-green: #15803D;
+  --accent-blue: #0284C7;
+  
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-code: 'JetBrains Mono', Consolas, Monaco, monospace;
+}
+
+/* Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  background-color: var(--bg-main);
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--ink-heavy);
+  font-family: var(--font-primary);
+  line-height: 1.65;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Subtle Ambient Gradient Depth */
+body::before {
+  content: '';
+  position: fixed;
+  top: -150px;
+  right: -100px;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(184, 80, 12, 0.04) 0%, rgba(250, 247, 240, 0) 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  bottom: -200px;
+  left: -150px;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(2, 132, 199, 0.03) 0%, rgba(250, 247, 240, 0) 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+::selection {
+  background-color: #E8DCC2;
+  color: #000;
+}
+
+.container {
+  width: 100%;
+  max-width: 980px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Typography */
+h1, h2, h3, h4 {
+  color: var(--ink-heavy);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+}
+
+p {
+  color: var(--ink-body);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+/* Header */
+.site-header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 64px;
+  background: rgba(250, 247, 240, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line-soft);
+  z-index: 100;
+}
+
+.site-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.site-logo {
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.site-logo-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-amber);
+  display: inline-block;
+  animation: pulse-dot 2.5s infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.6; }
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 2.25rem;
+}
+
+.nav-item {
+  font-size: 0.925rem;
+  font-weight: 500;
+  color: var(--ink-body);
+  position: relative;
+  padding-bottom: 4px;
+  transition: color 0.2s ease;
+}
+
+.nav-item:hover {
+  color: var(--accent-amber);
+}
+
+.nav-item::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--accent-amber);
+  transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-item:hover::after {
+  width: 100%;
+}
+
+/* Sections */
+.site-section {
+  padding: 5.5rem 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.section-tag {
+  font-family: var(--font-code);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent-amber);
+  display: block;
+  margin-bottom: 0.85rem;
+}
+
+.section-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  margin-bottom: 2.5rem;
+  letter-spacing: -0.03em;
+}
+
+/* Smooth Scroll Reveal Animations */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-on-scroll.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   About Section
+   ========================================================================== */
+.about-hero-title {
+  font-size: clamp(2.5rem, 5vw, 3.8rem);
+  font-weight: 800;
+  line-height: 1.12;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.035em;
+}
+
+.about-intro {
+  font-size: 1.25rem;
+  color: var(--ink-body);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  max-width: 780px;
+}
+
+.about-narrative {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--ink-body);
+  max-width: 820px;
+}
+
+.about-narrative p {
+  margin-bottom: 1.25rem;
+}
+
+.about-narrative strong {
+  color: var(--ink-heavy);
+  font-weight: 600;
+}
+
+/* Bulleted Recognitions (Clean, no extra boxes) */
+.milestones-bullets {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 2rem 0;
+  padding: 1.25rem 0 1.25rem 1.5rem;
+  border-left: 3px solid var(--accent-amber);
+}
+
+.milestones-bullets li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  font-size: 0.95rem;
+  color: var(--ink-heavy);
+}
+
+.bullet-icon {
+  color: var(--accent-amber);
+  font-size: 0.8rem;
+}
+
+/* Merged Skills (Clean typographic chips) */
+.skills-block {
+  margin-top: 3.5rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--line-soft);
+}
+
+.skills-heading {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.skills-list-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.skill-category h4 {
+  font-family: var(--font-code);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-light);
+  margin-bottom: 0.85rem;
+}
+
+.skill-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.skill-chip {
+  font-family: var(--font-code);
+  font-size: 0.85rem;
+  padding: 0.35rem 0.75rem;
+  background: var(--bg-white);
+  border: 1px solid var(--line-medium);
+  color: var(--ink-heavy);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.skill-chip:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent-amber);
+  box-shadow: 0 4px 10px rgba(184, 80, 12, 0.1);
+}
+
+.skill-chip.highlight {
+  border-color: rgba(184, 80, 12, 0.35);
+  background: rgba(184, 80, 12, 0.06);
+  color: var(--accent-amber);
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   Projects Section with 3D Flip Banners
+   ========================================================================== */
+.projects-deck {
+  display: flex;
+  flex-direction: column;
+  gap: 3.5rem;
+}
+
+.project-row {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 2.5rem;
+  align-items: center;
+  padding-bottom: 3.5rem;
+  border-bottom: 1px solid var(--line-soft);
+  transition: transform 0.3s ease;
+}
+
+.project-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+/* 3D Flip Card */
+.flip-card {
+  width: 100%;
+  height: 200px;
+  perspective: 1200px;
+  cursor: pointer;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-style: preserve-3d;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04);
+}
+
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg) scale(1.02);
+}
+
+.flip-card-front, .flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  overflow: hidden;
+  border: 1px solid var(--line-medium);
+}
+
+.flip-card-front {
+  background: var(--bg-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flip-card-front img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.flip-card:hover .flip-card-front img {
+  transform: scale(1.08);
+}
+
+.flip-badge-hint {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  font-family: var(--font-code);
+  font-size: 0.65rem;
+  padding: 0.2rem 0.55rem;
+  background: rgba(24, 21, 18, 0.85);
+  color: #FFFFFF;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  backdrop-filter: blur(4px);
+}
+
+.flip-card-back {
+  background: var(--ink-heavy);
+  color: #FFFFFF;
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.flip-card-back h4 {
+  color: #FFFFFF;
+  font-size: 1.15rem;
+  margin-bottom: 0.35rem;
+}
+
+.flip-card-back p {
+  color: #D1D5DB;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin-bottom: 0.85rem;
+}
+
+.flip-card-back .flip-hint-btn {
+  font-family: var(--font-code);
+  font-size: 0.775rem;
+  color: #F59E0B;
+  font-weight: 600;
+  text-decoration: underline;
+  transition: color 0.15s ease;
+}
+
+.flip-card-back .flip-hint-btn:hover {
+  color: #FBBF24;
+}
+
+/* Project Info */
+.project-info-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.project-header-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.project-name {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.project-award-tag {
+  font-family: var(--font-code);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent-amber);
+  background: rgba(184, 80, 12, 0.07);
+  border: 1px solid rgba(184, 80, 12, 0.22);
+  padding: 0.2rem 0.65rem;
+}
+
+.project-award-tag.gold {
+  color: #15803D;
+  background: rgba(21, 128, 61, 0.08);
+  border-color: rgba(21, 128, 61, 0.25);
+}
+
+.project-summary {
+  font-size: 1rem;
+  color: var(--ink-body);
+  line-height: 1.7;
+  margin-bottom: 1.25rem;
+}
+
+.project-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line-soft);
+}
+
+.tech-tags-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.tech-tag-item {
+  font-family: var(--font-code);
+  font-size: 0.75rem;
+  padding: 0.2rem 0.55rem;
+  background: var(--bg-subtle);
+  color: var(--ink-light);
+  border: 1px solid var(--line-soft);
+}
+
+.project-cta-links {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.project-btn-link {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink-heavy);
+  border-bottom: 1.5px solid var(--line-hard);
+  padding-bottom: 1px;
+  transition: all 0.2s ease;
+}
+
+.project-btn-link:hover {
+  color: var(--accent-amber);
+  border-color: var(--accent-amber);
+  transform: translateX(2px);
+}
+
+/* ==========================================================================
+   Contact Section (Fluid, no weird boxes)
+   ========================================================================== */
+.contact-container {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 3.5rem;
+  align-items: start;
+}
+
+.contact-left p {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+.contact-email-inline {
+  margin-bottom: 2rem;
+}
+
+.email-label {
+  font-family: var(--font-code);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.email-value {
+  font-family: var(--font-code);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--ink-heavy);
+}
+
+/* Visual Platform Cards */
+.contact-platforms-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+}
+
+.platform-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.9rem 1.1rem;
+  background: var(--bg-white);
+  border: 1px solid var(--line-medium);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.platform-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent-amber);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.05);
+}
+
+.platform-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-amber);
+  flex-shrink: 0;
+}
+
+.platform-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.platform-name {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--ink-heavy);
+}
+
+.platform-handle {
+  font-family: var(--font-code);
+  font-size: 0.725rem;
+  color: var(--ink-light);
+}
+
+/* Contact Form */
+.contact-form-wrapper {
+  background: var(--bg-white);
+  border: 1px solid var(--line-medium);
+  padding: 2.25rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.form-group-item {
+  margin-bottom: 1.25rem;
+}
+
+.form-label-txt {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: var(--ink-heavy);
+}
+
+.form-input-field, .form-textarea-field {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background: var(--bg-main);
+  border: 1px solid var(--line-medium);
+  color: var(--ink-heavy);
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.form-input-field:focus, .form-textarea-field:focus {
+  outline: none;
+  border-color: var(--accent-amber);
+  background: var(--bg-white);
+}
+
+.form-textarea-field {
+  min-height: 125px;
+  resize: vertical;
+}
+
+.form-send-btn {
+  width: 100%;
+  padding: 0.9rem;
+  background: var(--ink-heavy);
+  color: var(--bg-main);
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.form-send-btn:hover {
+  background: var(--accent-amber);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(184, 80, 12, 0.25);
+}
+
+/* Footer */
+.site-footer {
+  padding: 3rem 0;
+  border-top: 1px solid var(--line-soft);
+  font-size: 0.875rem;
+  color: var(--ink-light);
+}
+
+.footer-content-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* ==========================================================================
+   Full-Screen 3D Boxing Game (Entrance Experience)
+   ========================================================================== */
+.fighter-screen {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #080B10;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.fighter-screen.dismissed {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(1.02);
+}
+
+#fightCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Top HUD: Health Bars */
+.fight-top-hud {
+  position: absolute;
+  top: 24px;
+  left: 30px;
+  right: 30px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 2rem;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.fighter-hud-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.fighter-hud-card.enemy {
+  align-items: flex-end;
+}
+
+.fighter-name-tag {
+  font-family: var(--font-code);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hp-bar-track {
+  width: 100%;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+  position: relative;
+}
+
+.hp-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0284C7, #38BDF8);
+  transition: width 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hp-bar-fill.enemy-hp {
+  background: linear-gradient(90deg, #F59E0B, #DC2626);
+  margin-left: auto;
+}
+
+.vs-badge {
+  font-family: var(--font-code);
+  font-weight: 900;
+  font-size: 1.4rem;
+  color: #F59E0B;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 0.35rem 0.85rem;
+  border: 1px solid rgba(245, 158, 11, 0.5);
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+}
+
+/* Combat Instructions HUD */
+.fight-bottom-hud {
+  position: absolute;
+  bottom: 24px;
+  left: 30px;
+  right: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.fight-key-guide {
+  display: flex;
+  gap: 1.25rem;
+  background: rgba(8, 11, 16, 0.85);
+  padding: 0.75rem 1.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-family: var(--font-code);
+  font-size: 0.825rem;
+  color: #E2E8F0;
+  backdrop-filter: blur(8px);
+}
+
+.key-tag {
+  color: #F59E0B;
+  font-weight: 700;
+}
+
+.btn-skip-fight {
+  pointer-events: auto;
+  font-family: var(--font-code);
+  font-size: 0.85rem;
+  color: #CBD5E1;
+  background: rgba(8, 11, 16, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 0.75rem 1.35rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-skip-fight:hover {
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #FFFFFF;
+}
+
+/* Overlays */
+.fight-screen-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 11, 16, 0.86);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  z-index: 20;
+  color: #FFFFFF;
+}
+
+.fight-screen-overlay.hidden {
+  display: none;
+}
+
+.fight-btn-action {
+  font-family: var(--font-primary);
+  font-weight: 700;
+  font-size: 1.05rem;
+  padding: 0.9rem 2.5rem;
+  background: var(--accent-amber);
+  color: #FFFFFF;
+  border: none;
+  cursor: pointer;
+  margin-top: 1.25rem;
+  letter-spacing: 0.02em;
+  transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: 0 4px 20px rgba(184, 80, 12, 0.4);
+}
+
+.fight-btn-action:hover {
+  transform: translateY(-2px);
+  background: #C2410C;
+  box-shadow: 0 6px 24px rgba(184, 80, 12, 0.6);
+}
+
+.fight-btn-action.win {
+  background: #16A34A;
+  box-shadow: 0 4px 20px rgba(22, 163, 74, 0.4);
+}
+
+.fight-btn-action.win:hover {
+  background: #15803D;
+  box-shadow: 0 6px 24px rgba(22, 163, 74, 0.6);
+}
+
+/* Floating Impact Damage Text */
+.floating-hit-text {
+  position: absolute;
+  font-family: var(--font-code);
+  font-weight: 900;
+  font-size: 1.45rem;
+  color: #FBBF24;
+  text-shadow: 0 0 12px rgba(245, 158, 11, 0.9);
+  pointer-events: none;
+  z-index: 15;
+  animation: float-hit 0.75s ease-out forwards;
+}
+
+@keyframes float-hit {
+  0% { transform: translateY(0) scale(0.7); opacity: 1; }
+  50% { transform: translateY(-25px) scale(1.15); opacity: 1; }
+  100% { transform: translateY(-45px) scale(1); opacity: 0; }
+}
+
+/* Mobile Controls */
+.mobile-fight-touch {
+  display: none;
+  position: absolute;
+  bottom: 85px;
+  left: 20px;
+  right: 20px;
+  justify-content: space-between;
+  z-index: 15;
+}
+
+.touch-action-btn {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #FFFFFF;
+  font-size: 0.9rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  backdrop-filter: blur(4px);
+}
+
+/* Responsive */
+@media (max-width: 820px) {
+  .project-row {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .skills-list-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .contact-container {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  
+  .fight-top-hud {
+    left: 15px;
+    right: 15px;
+    gap: 0.85rem;
+  }
+  
+  .fight-key-guide {
+    display: none;
+  }
+  
+  .mobile-fight-touch {
+    display: flex;
+  }
+}
+/* Additions for Hardcore Banner & HUD alignment */
+.hardcore-banner {
+  position: absolute;
+  top: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, #DC2626, #F59E0B);
+  color: #FFFFFF;
+  font-family: var(--font-code);
+  font-weight: 800;
+  font-size: 1rem;
+  padding: 0.6rem 1.8rem;
+  border-radius: 4px;
+  box-shadow: 0 0 25px rgba(239, 68, 68, 0.8);
+  z-index: 50;
+  animation: pulse-banner 1s infinite alternate;
+  letter-spacing: 0.05em;
+  pointer-events: none;
+}
+
+.hardcore-banner.hidden {
+  display: none;
+}
+
+@keyframes pulse-banner {
+  0% { transform: translateX(-50%) scale(0.97); }
+  100% { transform: translateX(-50%) scale(1.04); }
+}
+
+.hp-val-wrap {
+  font-family: var(--font-code);
+  font-weight: 700;
+  color: #E2E8F0;
+  margin-left: 0.5rem;
+}
+
+.fight-modal-box {
+  background: rgba(12, 14, 20, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 2.5rem 3rem;
+  max-width: 580px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+  text-align: center;
+}
+
+.fight-title-hero {
+  font-family: 'Syne', var(--font-primary);
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  font-weight: 900;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.fight-subtitle-hero {
+  font-size: 1.05rem;
+  color: #CBD5E1;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.fight-controls-guide-text {
+  margin-top: 1.5rem;
+  font-family: var(--font-code);
+  font-size: 0.825rem;
+  color: #94A3B8;
+}
+
+.fight-controls-guide-text strong {
+  color: #F59E0B;
+}
+
+.easter-egg-hint {
+  font-family: var(--font-code);
+  font-size: 0.725rem;
+  color: #64748B;
+  margin-top: 0.85rem;
+}

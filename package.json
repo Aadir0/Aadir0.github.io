@@ -1,0 +1,19 @@
+{
+  "name": "aadityaraj-portfolio",
+  "version": "1.0.0",
+  "description": "Portfolio website for Aadityaraj Singh (Aadir0) - Indie Game Developer & Computer Science Student",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve ."
+  },
+  "keywords": [
+    "portfolio",
+    "game-developer",
+    "unity",
+    "threejs",
+    "aadityaraj"
+  ],
+  "author": "Aadityaraj Singh",
+  "license": "MIT"
+}
+

@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aaditya Raj — Indie Game Developer</title>
+  <meta name="description" content="Portfolio of Aaditya Raj. Computer Science student, indie game developer, Student Ambassador at GDAI.">
+  <meta name="author" content="Aaditya Raj">
+  <meta name="theme-color" content="#FAF6EE">
+
+  <!-- Fonts: Inter, Syne & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥊</text></svg>">
+</head>
+<body>
+
+  <!-- ==========================================================================
+       Fullscreen 3D Boxing Game (Entrance Challenge)
+       ========================================================================== -->
+  <div id="fightScreenRoot" class="fighter-screen">
+    <canvas id="fightCanvas"></canvas>
+
+    <!-- Hardcore Mode Banner Toast -->
+    <div id="hardcoreBannerToast" class="hardcore-banner hidden">
+      🔥 HARDCORE BOSS MODE ACTIVATED 🔥
+    </div>
+
+    <!-- Top HUD: Health Bars -->
+    <div class="fight-top-hud">
+      <!-- Player Card: YOU -->
+      <div class="fighter-hud-card">
+        <div class="fighter-name-tag">
+          <span style="color: #38BDF8;">●</span>
+          <span>YOU</span>
+          <span class="hp-val-wrap"><span id="playerHpVal">100</span> HP</span>
+        </div>
+        <div class="hp-bar-track">
+          <div id="playerHpFill" class="hp-bar-fill" style="width: 100%;"></div>
+        </div>
+      </div>
+
+      <!-- VS Badge (Clickable Easter Egg!) -->
+      <div id="fightVsBadge" class="vs-badge" title="Triple-click for a surprise!">VS</div>
+
+      <!-- AI Opponent: Aaditya Raj (HP is placed AFTER the name!) -->
+      <div class="fighter-hud-card enemy">
+        <div class="fighter-name-tag">
+          <span style="color: #F59E0B;">●</span>
+          <span id="enemyNameLabel">Aaditya Raj (AI)</span>
+          <span class="hp-val-wrap"><span id="enemyHpVal">100</span> HP</span>
+        </div>
+        <div class="hp-bar-track">
+          <div id="enemyHpFill" class="hp-bar-fill enemy-hp" style="width: 100%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Start Overlay -->
+    <div id="fightStartOverlay" class="fight-screen-overlay">
+      <div class="fight-modal-box">
+        <h1 class="fight-title-hero">BOXING SHOWDOWN</h1>
+        <p class="fight-subtitle-hero">
+          Defeat <strong>Aaditya Raj</strong> in the 3D boxing ring to enter his developer portfolio!
+        </p>
+
+        <button id="btnStartFight" class="fight-btn-action">START MATCH</button>
+
+        <div class="fight-controls-guide-text">
+          <span><strong>A / D</strong> Move</span> • 
+          <span><strong>Space</strong> Jump</span> • 
+          <span><strong>Left Click</strong> Punch</span> • 
+          <span><strong>Right Click</strong> Block</span>
+        </div>
+
+        <div class="easter-egg-hint">
+          Tip: Type "hardcore" or tap the VS badge 3x for Hardcore Boss Mode
+        </div>
+      </div>
+    </div>
+
+    <!-- Victory Overlay -->
+    <div id="fightWinOverlay" class="fight-screen-overlay hidden">
+      <div class="fight-modal-box">
+        <h1 class="fight-title-hero" style="color: #22C55E;">K.O.! YOU WIN!</h1>
+        <p class="fight-subtitle-hero">
+          Flawless fight. Welcome to Aaditya Raj's portfolio website.
+        </p>
+        <button id="btnEnterFromFight" class="fight-btn-action win">Enter Website →</button>
+      </div>
+    </div>
+
+    <!-- Defeat Overlay -->
+    <div id="fightLoseOverlay" class="fight-screen-overlay hidden">
+      <div class="fight-modal-box">
+        <h1 class="fight-title-hero" style="color: #EF4444;">KNOCKED OUT!</h1>
+        <p class="fight-subtitle-hero">
+          Aaditya landed the counter punch. Rematch and claim victory!
+        </p>
+        <button id="btnRetryFight" class="fight-btn-action">Rematch / Try Again</button>
+      </div>
+    </div>
+
+    <!-- Bottom Instructions & Skip Button -->
+    <div class="fight-bottom-hud">
+      <div class="fight-key-guide">
+        <span><strong class="key-tag">A / D</strong> Move</span>
+        <span><strong class="key-tag">Space</strong> Jump</span>
+        <span><strong class="key-tag">Left Click</strong> Punch</span>
+        <span><strong class="key-tag">Right Click</strong> Block</span>
+      </div>
+      <button id="btnSkipFight" class="btn-skip-fight">Skip to Website →</button>
+    </div>
+
+    <!-- Mobile Touch Controls -->
+    <div class="mobile-fight-touch">
+      <button id="btnMobileJump" class="touch-action-btn">JUMP</button>
+      <button id="btnMobilePunch" class="touch-action-btn" style="background: rgba(14, 165, 233, 0.5);">PUNCH</button>
+      <button id="btnMobileBlock" class="touch-action-btn" style="background: rgba(245, 158, 11, 0.5);">BLOCK</button>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       Website Header
+       ========================================================================== -->
+  <header class="site-header">
+    <div class="container site-header-inner">
+      <a href="#about" class="site-logo">
+        <span class="site-logo-dot"></span>
+        <span style="font-family: 'Syne', sans-serif;">Aaditya Raj</span>
+      </a>
+
+      <nav class="nav-menu">
+        <a href="#about" class="nav-item">About</a>
+        <a href="#projects" class="nav-item">Projects</a>
+        <a href="#contact" class="nav-item">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       1. About Section (Integrated Skills & Highlights)
+       ========================================================================== -->
+  <section id="about" class="site-section">
+    <div class="container">
+      <span class="section-tag">Game Developer &amp; Software Undergrad</span>
+      <h1 class="about-hero-title">Aaditya Raj</h1>
+      
+      <p class="about-intro">
+        Crafting responsive gameplay systems, 2D &amp; 3D physics mechanics, and memorable indie games.
+      </p>
+
+      <div class="about-narrative">
+        <p>
+          I build games primarily with <strong>Unity &amp; C#</strong>, turning experimental concepts into 
+          playable worlds with satisfying player feel and fluid controls.
+        </p>
+
+        <!-- Professional Bulleted Recognitions (Clean, No extra boxes) -->
+        <ul class="milestones-bullets">
+          <li>
+            <span class="bullet-icon">❖</span>
+            <span><strong>Student Ambassador at GDAI</strong> (Game Developers Association of India)</span>
+          </li>
+          <li>
+            <span class="bullet-icon">❖</span>
+            <span><strong>Won Just a Hackathon</strong> with <em>Time Traveler</em></span>
+          </li>
+          <li>
+            <span class="bullet-icon">❖</span>
+            <span><strong>Best Art Direction Award</strong> at Geek-N-Jam for <em>Nightmare — A fairy tale</em></span>
+          </li>
+        </ul>
+
+        <p>
+          I frequently ship games through global game jams and hackathons, collaborating with other indie creators 
+          and exploring custom graphics, shaders, and multiplayer game loops.
+        </p>
+      </div>
+
+      <!-- Integrated Skills & Tools Matrix -->
+      <div class="skills-block">
+        <h3 class="skills-heading">
+          <span>Technical Skills &amp; Software</span>
+        </h3>
+
+        <div class="skills-list-grid">
+          <!-- Programming Languages -->
+          <div class="skill-category">
+            <h4>Languages</h4>
+            <div class="skill-chips">
+              <span class="skill-chip highlight">C#</span>
+              <span class="skill-chip">C</span>
+              <span class="skill-chip">C++</span>
+              <span class="skill-chip">Java</span>
+              <span class="skill-chip">Go</span>
+              <span class="skill-chip">HTML</span>
+              <span class="skill-chip">CSS</span>
+            </div>
+          </div>
+
+          <!-- Engine & Creative Software -->
+          <div class="skill-category">
+            <h4>Engine &amp; Creative Tools</h4>
+            <div class="skill-chips">
+              <span class="skill-chip highlight">Unity</span>
+              <span class="skill-chip">Aseprite</span>
+              <span class="skill-chip">Blender</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       2. Projects Section with 3D Flip Banners
+       ========================================================================== -->
+  <section id="projects" class="site-section">
+    <div class="container">
+      <span class="section-label">Selected Works</span>
+      <h2 class="section-title">Featured Projects</h2>
+
+      <div class="projects-deck">
+
+        <!-- 1. Nightmare - A fairy tale (Best Art Direction Award) -->
+        <div class="project-row">
+          <div class="flip-card">
+            <div class="flip-card-inner">
+              <div class="flip-card-front">
+                <img src="https://img.itch.zone/aW1nLzI4NzQyODE0LmpwZWc=/315x250%23c/488o6b.jpeg" alt="Nightmare - A fairy tale banner" loading="lazy">
+                <span class="flip-badge-hint">Hover to Flip</span>
+              </div>
+              <div class="flip-card-back">
+                <h4>Geek-N-Jam Winner</h4>
+                <p>Awarded Best Art Direction for atmospheric dark fantasy art and precision platforming.</p>
+                <a href="https://surana-rishabh.itch.io/nightmare-a-fairy-tale" target="_blank" rel="noopener noreferrer" class="flip-hint-btn">
+                  Play on Itch.io ↗
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="project-info-block">
+            <div class="project-header-line">
+              <h3 class="project-name">Nightmare — A fairy tale</h3>
+              <span class="project-award-tag gold">★ Best Art Direction Award (Geek-N-Jam)</span>
+            </div>
+            <p class="project-summary">
+              Co-developed with Rishabh Surana for the Geek-N-Jam game jam. A dark fantasy platformer with 
+              atmospheric hand-crafted visual design, environmental hazards, and fluid platforming physics.
+            </p>
+            <div class="project-meta-row">
+              <div class="tech-tags-wrap">
+                <span class="tech-tag-item">Unity</span>
+                <span class="tech-tag-item">C#</span>
+                <span class="tech-tag-item">Geek-N-Jam</span>
+                <span class="tech-tag-item">Collaboration</span>
+              </div>
+              <div class="project-cta-links">
+                <a href="https://surana-rishabh.itch.io/nightmare-a-fairy-tale" target="_blank" rel="noopener noreferrer" class="project-btn-link">Play Itch.io ↗</a>
+                <a href="https://github.com/Aadir0/Nightmare-A-fairy-tale" target="_blank" rel="noopener noreferrer" class="project-btn-link">GitHub ↗</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Time Traveler (Hackathon Winner) -->
+        <div class="project-row">
+          <div class="flip-card">
+            <div class="flip-card-inner">
+              <div class="flip-card-front">
+                <img src="https://img.itch.zone/aW1nLzI1NDA0OTIxLnBuZw==/315x250%23c/ZzIGKB.png" alt="Time Traveler banner" loading="lazy">
+                <span class="flip-badge-hint">Hover to Flip</span>
+              </div>
+              <div class="flip-card-back">
+                <h4>Hackathon Winner</h4>
+                <p>1st Place project featuring temporal loop logic, state recording, and chronological puzzles.</p>
+                <a href="https://cholebhature-hehe.itch.io/time-traveler" target="_blank" rel="noopener noreferrer" class="flip-hint-btn">
+                  Play on Itch.io ↗
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="project-info-block">
+            <div class="project-header-line">
+              <h3 class="project-name">Time Traveler</h3>
+              <span class="project-award-tag gold">★ Won Just a Hackathon</span>
+            </div>
+            <p class="project-summary">
+              Built for and victorious at Just a Hackathon. A chronological puzzle game where players manipulate 
+              time loops and state rewinds to solve intricate sequential mechanisms.
+            </p>
+            <div class="project-meta-row">
+              <div class="tech-tags-wrap">
+                <span class="tech-tag-item">Unity</span>
+                <span class="tech-tag-item">C#</span>
+                <span class="tech-tag-item">Temporal Logic</span>
+                <span class="tech-tag-item">Hackathon Winner</span>
+              </div>
+              <div class="project-cta-links">
+                <a href="https://cholebhature-hehe.itch.io/time-traveler" target="_blank" rel="noopener noreferrer" class="project-btn-link">Play Itch.io ↗</a>
+                <a href="https://github.com/Aadir0/Time-Traveler" target="_blank" rel="noopener noreferrer" class="project-btn-link">GitHub ↗</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. ILLegal Moves (StarCade Game Jam) -->
+        <div class="project-row">
+          <div class="flip-card">
+            <div class="flip-card-inner">
+              <div class="flip-card-front">
+                <img src="https://img.itch.zone/aW1nLzI0ODI3NzgyLmpwZWc=/315x250%23c/aNL%2FZM.jpeg" alt="ILLegal Moves banner" loading="lazy">
+                <span class="flip-badge-hint">Hover to Flip</span>
+              </div>
+              <div class="flip-card-back">
+                <h4>StarCade Game Jam</h4>
+                <p>Precision gameplay engineered with deceptive mechanics and unconventional rules.</p>
+                <a href="https://cholebhature-hehe.itch.io/illegal-moves" target="_blank" rel="noopener noreferrer" class="flip-hint-btn">
+                  Play on Itch.io ↗
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="project-info-block">
+            <div class="project-header-line">
+              <h3 class="project-name">ILLegal Moves</h3>
+              <span class="project-award-tag">StarCade Game Jam</span>
+            </div>
+            <p class="project-summary">
+              Created for the <strong>StarCade Game Jam</strong>. A precision platformer designed with deceptive traps 
+              and unconventional movement rules, subverting traditional platforming instincts.
+            </p>
+            <div class="project-meta-row">
+              <div class="tech-tags-wrap">
+                <span class="tech-tag-item">Unity</span>
+                <span class="tech-tag-item">C#</span>
+                <span class="tech-tag-item">StarCade Jam</span>
+                <span class="tech-tag-item">Precision Platformer</span>
+              </div>
+              <div class="project-cta-links">
+                <a href="https://cholebhature-hehe.itch.io/illegal-moves" target="_blank" rel="noopener noreferrer" class="project-btn-link">Play Itch.io ↗</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. DriftIT -->
+        <div class="project-row">
+          <div class="flip-card">
+            <div class="flip-card-inner">
+              <div class="flip-card-front">
+                <img src="https://img.itch.zone/aW1nLzMwMTg2ODI4LmdpZg==/315x250%23c/V02WAX.gif" alt="DriftIT banner" loading="lazy">
+                <span class="flip-badge-hint">Hover to Flip</span>
+              </div>
+              <div class="flip-card-back">
+                <h4>2-Player Racing</h4>
+                <p>Drift physics, tire friction calculation, and local multiplayer competition.</p>
+                <a href="https://cholebhature-hehe.itch.io/driftit" target="_blank" rel="noopener noreferrer" class="flip-hint-btn">
+                  Play on Itch.io ↗
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="project-info-block">
+            <div class="project-header-line">
+              <h3 class="project-name">DriftIT</h3>
+              <span class="project-award-tag">Multiplayer Racing</span>
+            </div>
+            <p class="project-summary">
+              A 2D top-down multiplayer drifting game playable solo or 2-player local. 
+              Engineered with custom tire traction friction, realistic vehicle drift physics, and competitive arcade controls.
+            </p>
+            <div class="project-meta-row">
+              <div class="tech-tags-wrap">
+                <span class="tech-tag-item">Unity</span>
+                <span class="tech-tag-item">C#</span>
+                <span class="tech-tag-item">Multiplayer</span>
+                <span class="tech-tag-item">Physics Simulation</span>
+              </div>
+              <div class="project-cta-links">
+                <a href="https://cholebhature-hehe.itch.io/driftit" target="_blank" rel="noopener noreferrer" class="project-btn-link">Play Itch.io ↗</a>
+                <a href="https://github.com/Aadir0/DriftIT" target="_blank" rel="noopener noreferrer" class="project-btn-link">GitHub ↗</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Strange Rooms (Brackeys Game Jam) -->
+        <div class="project-row">
+          <div class="flip-card">
+            <div class="flip-card-inner">
+              <div class="flip-card-front">
+                <img src="https://img.itch.zone/aW1nLzI1NzM2NDY2LnBuZw==/315x250%23c/679iCV.png" alt="Strange Rooms banner" loading="lazy">
+                <span class="flip-badge-hint">Hover to Flip</span>
+              </div>
+              <div class="flip-card-back">
+                <h4>Brackeys Jam Entry</h4>
+                <p>Optical perspective puzzle game exploring room manipulation and shaders.</p>
+                <a href="https://cholebhature-hehe.itch.io/strange-rooms" target="_blank" rel="noopener noreferrer" class="flip-hint-btn">
+                  Play on Itch.io ↗
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="project-info-block">
+            <div class="project-header-line">
+              <h3 class="project-name">Strange Rooms</h3>
+              <span class="project-award-tag">Brackeys Game Jam</span>
+            </div>
+            <p class="project-summary">
+              Developed for the global Brackeys Game Jam. An atmospheric puzzle experience where room manipulation, 
+              optical perspectives, and custom lighting challenge player spatial orientation.
+            </p>
+            <div class="project-meta-row">
+              <div class="tech-tags-wrap">
+                <span class="tech-tag-item">Unity</span>
+                <span class="tech-tag-item">C#</span>
+                <span class="tech-tag-item">Brackeys Jam</span>
+                <span class="tech-tag-item">Puzzles</span>
+              </div>
+              <div class="project-cta-links">
+                <a href="https://cholebhature-hehe.itch.io/strange-rooms" target="_blank" rel="noopener noreferrer" class="project-btn-link">Play Itch.io ↗</a>
+                <a href="https://github.com/Aadir0/Strange-Rooms" target="_blank" rel="noopener noreferrer" class="project-btn-link">GitHub ↗</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. The Last Train -->
+        <div class="project-row">
+          <div class="flip-card">
+            <div class="flip-card-inner">
+              <div class="flip-card-front" style="background: #181E28;">
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #94A3B8;">
+                  <span style="font-size: 2.5rem; margin-bottom: 0.35rem;">🚂</span>
+                  <span style="font-family: var(--font-code); font-size: 0.85rem; color: #F59E0B;">The Last Train</span>
+                </div>
+                <span class="flip-badge-hint">Hover to Flip</span>
+              </div>
+              <div class="flip-card-back">
+                <h4>Atmospheric Narrative</h4>
+                <p>Cinematic lighting and moody shaders built in Unity.</p>
+                <a href="https://github.com/Aadir0/The-Last-Train" target="_blank" rel="noopener noreferrer" class="flip-hint-btn">
+                  View Repository ↗
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="project-info-block">
+            <div class="project-header-line">
+              <h3 class="project-name">The Last Train</h3>
+              <span class="project-award-tag">Atmospheric Experience</span>
+            </div>
+            <p class="project-summary">
+              An evocative atmospheric journey aboard an isolated train, focusing on custom post-processing, 
+              particle smoke, and cinematic mood design.
+            </p>
+            <div class="project-meta-row">
+              <div class="tech-tags-wrap">
+                <span class="tech-tag-item">Unity</span>
+                <span class="tech-tag-item">Atmosphere</span>
+                <span class="tech-tag-item">Visual Design</span>
+              </div>
+              <div class="project-cta-links">
+                <a href="https://github.com/Aadir0/The-Last-Train" target="_blank" rel="noopener noreferrer" class="project-btn-link">GitHub ↗</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. Dragons Quest -->
+        <div class="project-row">
+          <div class="flip-card">
+            <div class="flip-card-inner">
+              <div class="flip-card-front" style="background: #1A2436;">
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #94A3B8;">
+                  <span style="font-size: 2.5rem; margin-bottom: 0.35rem;">🐉</span>
+                  <span style="font-family: var(--font-code); font-size: 0.85rem; color: #38BDF8;">Dragons Quest</span>
+                </div>
+                <span class="flip-badge-hint">Hover to Flip</span>
+              </div>
+              <div class="flip-card-back">
+                <h4>2D Action Milestone</h4>
+                <p>First complete 2D action platformer with enemy AI and states.</p>
+                <a href="https://github.com/Aadir0/Dragons_Quest" target="_blank" rel="noopener noreferrer" class="flip-hint-btn">
+                  View Repository ↗
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="project-info-block">
+            <div class="project-header-line">
+              <h3 class="project-name">Dragons Quest</h3>
+              <span class="project-award-tag">First 2D Platformer</span>
+            </div>
+            <p class="project-summary">
+              Foundational 2D action platformer milestone built with custom state machines, 
+              patrol pathfinding, jump buffering, and retro level design.
+            </p>
+            <div class="project-meta-row">
+              <div class="tech-tags-wrap">
+                <span class="tech-tag-item">Unity</span>
+                <span class="tech-tag-item">C#</span>
+                <span class="tech-tag-item">2D Physics</span>
+              </div>
+              <div class="project-cta-links">
+                <a href="https://github.com/Aadir0/Dragons_Quest" target="_blank" rel="noopener noreferrer" class="project-btn-link">GitHub ↗</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       3. Contact Section (Fluid Layout, No Weird Stiff Boxes)
+       ========================================================================== -->
+  <section id="contact" class="site-section">
+    <div class="container">
+      <span class="section-label">Get in Touch</span>
+      <h2 class="section-title">Contact</h2>
+
+      <div class="contact-container">
+        <!-- Contact Info & Visual Cards -->
+        <div class="contact-left">
+          <p>
+            Open to game jam team invitations, feedback on published games, and software collaboration opportunities.
+          </p>
+
+          <div class="contact-email-inline">
+            <span class="email-label">Direct Email</span>
+            <span class="email-value">aadisingh3217@gmail.com</span>
+          </div>
+
+          <!-- Visual Social Platform Cards -->
+          <div class="contact-platforms-grid">
+            <!-- GitHub -->
+            <a href="https://github.com/Aadir0" target="_blank" rel="noopener noreferrer" class="platform-card">
+              <div class="platform-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+                </svg>
+              </div>
+              <div class="platform-details">
+                <span class="platform-name">GitHub</span>
+                <span class="platform-handle">@Aadir0</span>
+              </div>
+            </a>
+
+            <!-- Itch.io -->
+            <a href="https://cholebhature-hehe.itch.io/" target="_blank" rel="noopener noreferrer" class="platform-card">
+              <div class="platform-icon">
+                <svg width="22" height="22" viewBox="0 0 262.7 235.5" fill="currentColor">
+                  <path d="M32 1.4C21.3 7.7.2 31.9 0 38.3v10.5C0 62.1 12.5 73.9 23.8 73.9c13.6 0 24.9-11.3 24.9-24.6 0 13.4 10.9 24.6 24.5 24.6 13.6 0 24.2-11.3 24.2-24.6 0 13.4 11.6 24.6 25.2 24.6h.2c13.6 0 25.2-11.3 25.2-24.6 0 13.4 10.6 24.6 24.2 24.6 13.6 0 24.5-11.3 24.5-24.6 0 13.4 11.3 24.6 24.9 24.6 11.3 0 23.8-11.7 23.8-25V38.3C240.5 32 219.4 7.7 208.7 1.4 180.1.2 157 0 122.7 0 88.3 0 41.5.5 32 1.4z"/>
+                </svg>
+              </div>
+              <div class="platform-details">
+                <span class="platform-name">Itch.io</span>
+                <span class="platform-handle">cholebhature-hehe</span>
+              </div>
+            </a>
+
+            <!-- LinkedIn -->
+            <a href="https://www.linkedin.com/in/aadityaraj-singh/" target="_blank" rel="noopener noreferrer" class="platform-card">
+              <div class="platform-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                </svg>
+              </div>
+              <div class="platform-details">
+                <span class="platform-name">LinkedIn</span>
+                <span class="platform-handle">aadityaraj-singh</span>
+              </div>
+            </a>
+
+            <!-- Instagram -->
+            <a href="https://www.instagram.com/i_aaditya_raj/" target="_blank" rel="noopener noreferrer" class="platform-card">
+              <div class="platform-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+              </div>
+              <div class="platform-details">
+                <span class="platform-name">Instagram</span>
+                <span class="platform-handle">@i_aaditya_raj</span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="contact-form-wrapper">
+          <form id="contactForm">
+            <div class="form-group-item">
+              <label class="form-label-txt" for="name">Name</label>
+              <input type="text" id="name" name="name" class="form-input-field" placeholder="Your name" required>
+            </div>
+
+            <div class="form-group-item">
+              <label class="form-label-txt" for="email">Email</label>
+              <input type="email" id="email" name="email" class="form-input-field" placeholder="your@email.com" required>
+            </div>
+
+            <div class="form-group-item">
+              <label class="form-label-txt" for="message">Message</label>
+              <textarea id="message" name="message" class="form-textarea-field" placeholder="Tell me about your idea, game jam team, or message..." required></textarea>
+            </div>
+
+            <button type="submit" class="form-send-btn">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       Footer
+       ========================================================================== -->
+  <footer class="site-footer">
+    <div class="container footer-content-row">
+      <div>
+        <strong>Aaditya Raj</strong> — Game Developer
+      </div>
+      <div>
+        <a href="#about" style="border-bottom: 1px dotted var(--ink-light);">Back to Top ↑</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Three.js Library -->
+  <script src="js/libs/three.min.js"></script>
+  <script>
+    if (typeof THREE === 'undefined') {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>');
+    }
+  </script>
+
+  <!-- Scripts -->
+  <script src="js/game.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
