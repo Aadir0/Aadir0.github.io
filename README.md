@@ -63,20 +63,6 @@ The website features an interactive 3D boxing entrance challenge built using **T
 
 ---
 
-## 🚀 Running Locally
-
-Clone the repository and serve locally:
-
-```bash
-git clone https://github.com/Aadir0/Aadir0.github.io.git
-cd Aadir0.github.io
-npx serve .
-```
-
-Open `http://localhost:3000` in your browser.
-
----
-
 ## 📄 License
 
 MIT License © 2026 Aaditya Raj.
