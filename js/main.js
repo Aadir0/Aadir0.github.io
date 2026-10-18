@@ -5,9 +5,24 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   initBoxingEntrance();
+  initFlipCards();
   initContactForm();
   initScrollAnimations();
 });
+
+/* ==========================================================================
+   Mobile & Desktop Flip Card Interactions
+   ========================================================================== */
+function initFlipCards() {
+  const cards = document.querySelectorAll('.flip-card');
+  cards.forEach(card => {
+    card.addEventListener('click', (e) => {
+      // Don't toggle if user clicked a link inside the flipped card
+      if (e.target.tagName === 'A' || e.target.closest('a')) return;
+      card.classList.toggle('flipped');
+    });
+  });
+}
 
 /* ==========================================================================
    Boxing Game Entrance Management & Clean Shutdown

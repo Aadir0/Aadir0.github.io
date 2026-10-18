@@ -8,10 +8,10 @@
   <meta name="author" content="Aaditya Raj">
   <meta name="theme-color" content="#FAF6EE">
 
-  <!-- Fonts: Inter, Syne & JetBrains Mono -->
+  <!-- Fonts: Plus Jakarta Sans, Syne & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 
   <!-- Stylesheet -->
   <link rel="stylesheet" href="css/style.css">
@@ -46,8 +46,8 @@
         </div>
       </div>
 
-      <!-- VS Badge (Clickable Easter Egg!) -->
-      <div id="fightVsBadge" class="vs-badge" title="Triple-click for a surprise!">VS</div>
+      <!-- VS Badge -->
+      <div id="fightVsBadge" class="vs-badge">VS</div>
 
       <!-- AI Opponent: Aaditya Raj (HP is placed AFTER the name!) -->
       <div class="fighter-hud-card enemy">
@@ -77,10 +77,6 @@
           <span><strong>Space</strong> Jump</span> • 
           <span><strong>Left Click</strong> Punch</span> • 
           <span><strong>Right Click</strong> Block</span>
-        </div>
-
-        <div class="easter-egg-hint">
-          Tip: Type "hardcore" or tap the VS badge 3x for Hardcore Boss Mode
         </div>
       </div>
     </div>
@@ -118,11 +114,17 @@
       <button id="btnSkipFight" class="btn-skip-fight">Skip to Website →</button>
     </div>
 
-    <!-- Mobile Touch Controls -->
+    <!-- Mobile Dual-Thumb Touch Gamepad -->
     <div class="mobile-fight-touch">
-      <button id="btnMobileJump" class="touch-action-btn">JUMP</button>
-      <button id="btnMobilePunch" class="touch-action-btn" style="background: rgba(14, 165, 233, 0.5);">PUNCH</button>
-      <button id="btnMobileBlock" class="touch-action-btn" style="background: rgba(245, 158, 11, 0.5);">BLOCK</button>
+      <div class="mobile-touch-cluster dpad">
+        <button id="btnMobileLeft" class="touch-btn touch-move-btn" aria-label="Move Left">◀</button>
+        <button id="btnMobileRight" class="touch-btn touch-move-btn" aria-label="Move Right">▶</button>
+      </div>
+      <div class="mobile-touch-cluster actions">
+        <button id="btnMobileJump" class="touch-btn touch-jump-btn" aria-label="Jump">JUMP</button>
+        <button id="btnMobileBlock" class="touch-btn touch-block-btn" aria-label="Block">BLOCK</button>
+        <button id="btnMobilePunch" class="touch-btn touch-punch-btn" aria-label="Punch">PUNCH</button>
+      </div>
     </div>
   </div>
 
