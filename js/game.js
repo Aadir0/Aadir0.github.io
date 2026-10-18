@@ -1145,14 +1145,30 @@ class ArenaFightingGame {
   }
 
   bindControls() {
-    window.addEventListener('resize', () => {
+    const handleViewportChange = () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
       this.camera.aspect = w / h;
       this.camera.updateProjectionMatrix();
       this.renderer.setSize(w, h);
       this.checkOrientation();
+    };
+
+    window.addEventListener('resize', handleViewportChange);
+    window.addEventListener('orientationchange', () => {
+      setTimeout(handleViewportChange, 200);
     });
+
+    // Mark touch device early
+    const markTouch = () => {
+      document.body.classList.add('touch-device');
+      const root = document.getElementById('fightScreenRoot');
+      if (root) root.classList.add('touch-device');
+    };
+    if (this.isTouchDevice()) {
+      markTouch();
+    }
+    window.addEventListener('touchstart', markTouch, { once: true, passive: true });
 
     this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
@@ -1254,7 +1270,9 @@ class ArenaFightingGame {
   }
 
   isTouchDevice() {
-    return window.matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
+    return window.matchMedia('(pointer: coarse)').matches || 
+           'ontouchstart' in window || 
+           (typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0);
   }
 
   // Mobile: fullscreen + landscape lock (falls back to a rotate prompt when
@@ -1294,6 +1312,14 @@ class ArenaFightingGame {
     const prompt = document.getElementById('rotatePrompt');
     if (!prompt) return;
 
+    if (!prompt._hasDismissListener) {
+      prompt._hasDismissListener = true;
+      prompt.addEventListener('click', () => {
+        prompt.classList.add('hidden');
+        this.enterMobileLandscape();
+      });
+    }
+
     const isPortrait = window.innerHeight > window.innerWidth;
     const show = this.isTouchDevice() && this.isPlaying && isPortrait;
     prompt.classList.toggle('hidden', !show);
@@ -1304,14 +1330,14 @@ class ArenaFightingGame {
     if (!btn) return;
 
     const startHandler = (e) => {
-      e.preventDefault();
+      if (e.cancelable) e.preventDefault();
       e.stopPropagation();
       btn.classList.add('active');
       onStart();
     };
 
     const endHandler = (e) => {
-      e.preventDefault();
+      if (e.cancelable) e.preventDefault();
       e.stopPropagation();
       btn.classList.remove('active');
       onEnd();
@@ -1321,9 +1347,19 @@ class ArenaFightingGame {
     btn.addEventListener('touchend', endHandler, { passive: false });
     btn.addEventListener('touchcancel', endHandler, { passive: false });
 
-    btn.addEventListener('pointerdown', startHandler);
-    btn.addEventListener('pointerup', endHandler);
-    btn.addEventListener('pointercancel', endHandler);
+    // Pointer events for desktop or hybrid devices: ignore touch pointerType to avoid duplicate triggers
+    btn.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'touch') return;
+      startHandler(e);
+    });
+    btn.addEventListener('pointerup', (e) => {
+      if (e.pointerType === 'touch') return;
+      endHandler(e);
+    });
+    btn.addEventListener('pointercancel', (e) => {
+      if (e.pointerType === 'touch') return;
+      endHandler(e);
+    });
   }
 
   activateHardcoreMode(forceImmediate = true) {
