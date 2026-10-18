@@ -250,20 +250,52 @@ function initBackToTop() {
 }
 
 /* ==========================================================================
-   Contact Form Handling
+   Contact Form Handling (Direct Email Delivery & Formspree Endpoint)
    ========================================================================== */
 function initContactForm() {
   const form = document.getElementById('contactForm');
   if (!form) return;
 
-  form.addEventListener('submit', (e) => {
+  const statusMsg = document.getElementById('formStatusMsg');
+
+  const showStatus = (text, type = 'success') => {
+    if (!statusMsg) return;
+    statusMsg.textContent = text;
+    statusMsg.className = `form-status-msg ${type}`;
+    statusMsg.classList.remove('hidden');
+  };
+
+  const triggerMailtoFallback = (name, email, message, btn, originalText) => {
+    const subject = encodeURIComponent(`Portfolio Contact from ${name}`);
+    const body = encodeURIComponent(`Hi Aaditya,\n\n${message}\n\n---\nSender: ${name}\nEmail: ${email}`);
+    const mailtoUrl = `mailto:aadisingh3217@gmail.com?subject=${subject}&body=${body}`;
+
+    window.location.href = mailtoUrl;
+
+    btn.textContent = 'Opening Email Client...';
+    btn.style.background = '#0284C7';
+    showStatus(`Opening your email client to send to aadisingh3217@gmail.com...`, 'info');
+
+    setTimeout(() => {
+      btn.textContent = originalText;
+      btn.style.background = '';
+      btn.disabled = false;
+    }, 3500);
+  };
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const name = form.querySelector('[name="name"]').value.trim();
-    const email = form.querySelector('[name="email"]').value.trim();
-    const message = form.querySelector('[name="message"]').value.trim();
+
+    const nameInput = form.querySelector('[name="name"]');
+    const emailInput = form.querySelector('[name="email"]');
+    const messageInput = form.querySelector('[name="message"]');
+
+    const name = nameInput ? nameInput.value.trim() : '';
+    const email = emailInput ? emailInput.value.trim() : '';
+    const message = messageInput ? messageInput.value.trim() : '';
 
     if (!name || !email || !message) {
-      alert('Please fill out all fields.');
+      showStatus('Please fill in your name, email, and message.', 'error');
       return;
     }
 
@@ -272,16 +304,37 @@ function initContactForm() {
     btn.textContent = 'Sending Message...';
     btn.disabled = true;
 
-    setTimeout(() => {
-      btn.textContent = 'Message Received ✓';
-      btn.style.background = '#15803D';
-      
-      setTimeout(() => {
-        form.reset();
-        btn.textContent = originalText;
-        btn.style.background = '';
-        btn.disabled = false;
-      }, 3500);
-    }, 700);
+    const endpoint = form.getAttribute('action');
+    // If user has replaced placeholder with their real Formspree ID
+    const hasLiveEndpoint = endpoint && endpoint.includes('formspree.io/f/') && !endpoint.includes('mqkvrvbw');
+
+    if (hasLiveEndpoint) {
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (response.ok) {
+          btn.textContent = 'Message Sent ✓';
+          btn.style.background = '#15803D';
+          showStatus(`Thanks ${name}! Your message was delivered directly to Aaditya's Gmail.`, 'success');
+          form.reset();
+
+          setTimeout(() => {
+            btn.textContent = originalText;
+            btn.style.background = '';
+            btn.disabled = false;
+          }, 4000);
+        } else {
+          throw new Error('Endpoint submission failed');
+        }
+      } catch (err) {
+        triggerMailtoFallback(name, email, message, btn, originalText);
+      }
+    } else {
+      triggerMailtoFallback(name, email, message, btn, originalText);
+    }
   });
 }

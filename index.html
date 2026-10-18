@@ -14,7 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="css/style.css?v=3.3">
+  <link rel="stylesheet" href="css/style.css?v=3.4">
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥊</text></svg>">
@@ -142,15 +142,40 @@
 
     <!-- Mobile Dual-Thumb Touch Gamepad -->
     <div class="mobile-fight-touch">
-      <div class="mobile-touch-cluster dpad">
-        <button id="btnMobileLeft" class="touch-btn touch-move-btn" aria-label="Move Left">◀</button>
-        <button id="btnMobileRight" class="touch-btn touch-move-btn" aria-label="Move Right">▶</button>
+      <div class="mobile-touch-cluster dpad-cluster" id="mobileDpadZone">
+        <div class="dpad-capsule">
+          <button id="btnMobileLeft" class="touch-btn touch-move-btn" aria-label="Move Left">
+            <span class="btn-arrow">◀</span>
+            <span class="btn-subtext">LEFT</span>
+          </button>
+          <div class="dpad-divider"></div>
+          <button id="btnMobileRight" class="touch-btn touch-move-btn" aria-label="Move Right">
+            <span class="btn-subtext">RIGHT</span>
+            <span class="btn-arrow">▶</span>
+          </button>
+        </div>
       </div>
-      <div class="mobile-touch-cluster actions">
-        <button id="btnMobileJump" class="touch-btn touch-jump-btn" aria-label="Jump">JUMP</button>
-        <button id="btnMobileBlock" class="touch-btn touch-block-btn" aria-label="Block">BLOCK</button>
-        <button id="btnMobileKick" class="touch-btn touch-kick-btn" aria-label="Kick">KICK</button>
-        <button id="btnMobilePunch" class="touch-btn touch-punch-btn" aria-label="Punch">PUNCH</button>
+      <div class="mobile-touch-cluster actions-cluster">
+        <div class="action-top-row">
+          <button id="btnMobileJump" class="touch-btn touch-jump-btn" aria-label="Jump">
+            <span class="btn-icon">⬆</span>
+            <span class="btn-lbl">JUMP</span>
+          </button>
+          <button id="btnMobileBlock" class="touch-btn touch-block-btn" aria-label="Block">
+            <span class="btn-icon">🛡</span>
+            <span class="btn-lbl">BLOCK</span>
+          </button>
+        </div>
+        <div class="action-bottom-row">
+          <button id="btnMobileKick" class="touch-btn touch-kick-btn" aria-label="Kick">
+            <span class="btn-icon">🥋</span>
+            <span class="btn-lbl">KICK</span>
+          </button>
+          <button id="btnMobilePunch" class="touch-btn touch-punch-btn punch-primary" aria-label="Punch">
+            <span class="btn-icon punch-icon">🥊</span>
+            <span class="btn-lbl">PUNCH</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -665,7 +690,7 @@
 
         <!-- Contact Form -->
         <div class="contact-form-wrapper">
-          <form id="contactForm">
+          <form id="contactForm" action="https://formspree.io/f/mqkvrvbw" method="POST">
             <div class="form-group-item">
               <label class="form-label-txt" for="name">Name</label>
               <input type="text" id="name" name="name" class="form-input-field" placeholder="Your name" required>
@@ -681,7 +706,8 @@
               <textarea id="message" name="message" class="form-textarea-field" placeholder="Tell me about your idea, game jam team, or message..." required></textarea>
             </div>
 
-            <button type="submit" class="form-send-btn">Send Message</button>
+            <button type="submit" class="form-send-btn" id="btnSubmitMessage">Send Message</button>
+            <div id="formStatusMsg" class="form-status-msg hidden" role="alert"></div>
           </form>
         </div>
       </div>
@@ -711,7 +737,7 @@
   </script>
 
   <!-- Scripts -->
-  <script src="js/game.js?v=3.3"></script>
-  <script src="js/main.js?v=3.3"></script>
+  <script src="js/game.js?v=3.4"></script>
+  <script src="js/main.js?v=3.4"></script>
 </body>
 </html>

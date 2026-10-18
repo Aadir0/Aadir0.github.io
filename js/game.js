@@ -1232,22 +1232,13 @@ class ArenaFightingGame {
     });
 
     // Dedicated Touch Controls for Mobile
-    this.bindTouchButton('btnMobileLeft', 
-      () => { this.keys.left = true; }, 
-      () => { this.keys.left = false; }
-    );
-
-    this.bindTouchButton('btnMobileRight', 
-      () => { this.keys.right = true; }, 
-      () => { this.keys.right = false; }
-    );
-
     this.bindTouchButton('btnMobileJump', 
       () => {
         if (this.player && this.player.isGrounded) {
           this.player.vy = 11.5;
           this.player.isGrounded = false;
           audioFX.playWhoosh();
+          if (navigator.vibrate) navigator.vibrate(10);
         }
       }, 
       () => {}
@@ -1264,9 +1255,86 @@ class ArenaFightingGame {
     );
 
     this.bindTouchButton('btnMobileBlock', 
-      () => { if (this.player) this.player.isBlocking = true; }, 
+      () => {
+        if (this.player) {
+          this.player.isBlocking = true;
+          if (navigator.vibrate) navigator.vibrate(12);
+        }
+      }, 
       () => { if (this.player) this.player.isBlocking = false; }
     );
+
+    // Continuous Slide D-Pad Rocker (smooth thumb sliding without dead stops)
+    const dpadZone = document.getElementById('mobileDpadZone');
+    const btnLeft = document.getElementById('btnMobileLeft');
+    const btnRight = document.getElementById('btnMobileRight');
+
+    if (dpadZone) {
+      const updateDpadTouch = (touchX) => {
+        const rect = dpadZone.getBoundingClientRect();
+        const midX = rect.left + rect.width / 2;
+        const deadzone = rect.width * 0.10;
+
+        if (touchX < midX - deadzone) {
+          if (!this.keys.left) {
+            this.keys.left = true;
+            this.keys.right = false;
+            if (btnLeft) btnLeft.classList.add('active');
+            if (btnRight) btnRight.classList.remove('active');
+            if (navigator.vibrate) navigator.vibrate(8);
+          }
+        } else if (touchX > midX + deadzone) {
+          if (!this.keys.right) {
+            this.keys.right = true;
+            this.keys.left = false;
+            if (btnRight) btnRight.classList.add('active');
+            if (btnLeft) btnLeft.classList.remove('active');
+            if (navigator.vibrate) navigator.vibrate(8);
+          }
+        } else {
+          this.keys.left = false;
+          this.keys.right = false;
+          if (btnLeft) btnLeft.classList.remove('active');
+          if (btnRight) btnRight.classList.remove('active');
+        }
+      };
+
+      const resetDpad = (e) => {
+        if (e && e.cancelable) e.preventDefault();
+        this.keys.left = false;
+        this.keys.right = false;
+        if (btnLeft) btnLeft.classList.remove('active');
+        if (btnRight) btnRight.classList.remove('active');
+      };
+
+      dpadZone.addEventListener('touchstart', (e) => {
+        if (e.cancelable) e.preventDefault();
+        e.stopPropagation();
+        const touch = e.touches[0];
+        if (touch) updateDpadTouch(touch.clientX);
+      }, { passive: false });
+
+      dpadZone.addEventListener('touchmove', (e) => {
+        if (e.cancelable) e.preventDefault();
+        e.stopPropagation();
+        const touch = e.touches[0];
+        if (touch) updateDpadTouch(touch.clientX);
+      }, { passive: false });
+
+      dpadZone.addEventListener('touchend', resetDpad, { passive: false });
+      dpadZone.addEventListener('touchcancel', resetDpad, { passive: false });
+    }
+
+    // Tap-to-Punch on arena canvas (forgiving mobile strikes)
+    this.canvas.addEventListener('touchstart', (e) => {
+      if (!this.isPlaying) return;
+      const touch = e.touches[0];
+      if (!touch) return;
+      // Right 58% of viewport triggers instant punch
+      if (touch.clientX > window.innerWidth * 0.42) {
+        this.triggerPlayerPunch();
+      }
+    }, { passive: true });
   }
 
   isTouchDevice() {
@@ -1408,23 +1476,37 @@ class ArenaFightingGame {
 
   triggerPlayerPunch() {
     if (!this.player || this.player.isDead || this.player.punchCooldown > 0) return;
+    // Auto-face opponent so attacks never swing backwards
+    if (this.enemy) {
+      this.player.facing = this.enemy.x > this.player.x ? 1 : -1;
+      this.player.root.rotation.y = this.player.facing === 1 ? Math.PI / 2 : -Math.PI / 2;
+    }
     const didPunch = this.player.punch();
     if (!didPunch) return;
+    if (navigator.vibrate) navigator.vibrate(16);
     const damage = Math.floor(Math.random() * 5) + 14;
     this.checkHit(this.player, this.enemy, damage, 'JAB!');
   }
 
   triggerPlayerKick() {
     if (!this.player || this.player.isDead || this.player.kickCooldown > 0) return;
+    // Auto-face opponent
+    if (this.enemy) {
+      this.player.facing = this.enemy.x > this.player.x ? 1 : -1;
+      this.player.root.rotation.y = this.player.facing === 1 ? Math.PI / 2 : -Math.PI / 2;
+    }
     const didKick = this.player.kick();
     if (!didKick) return;
+    if (navigator.vibrate) navigator.vibrate(26);
     const damage = Math.floor(Math.random() * 6) + 20;
     this.checkHit(this.player, this.enemy, damage, 'ROUNDHOUSE KICK!', true);
   }
 
   checkHit(attacker, defender, damage, label, isKick = false) {
     const dist = Math.abs(attacker.x - defender.x);
-    const maxReach = isKick ? 2.35 : 1.95;
+    // Player gets slightly more forgiving reach (2.25 punch / 2.65 kick) so mobile combat connects crisply
+    const baseReach = isKick ? 2.35 : 1.95;
+    const maxReach = attacker === this.player ? (baseReach + 0.3) : baseReach;
     if (dist < maxReach) {
       // AI Defensive Reactions (Slipping & Guard Blocking with Counters)
       if (defender.isAI && !defender.isAttacking) {
