@@ -70,55 +70,49 @@
       </div>
     </div>
 
-    <!-- Start Overlay (Arcade Glassmorphism Modal) -->
+    <!-- Start Overlay (Clean, Minimal Modal) -->
     <div id="fightStartOverlay" class="fight-screen-overlay">
       <div class="fight-modal-box">
-        <div class="fight-pill-tag">3D BOXING ARENA</div>
-        <h1 class="fight-title-hero">SHOWDOWN</h1>
-        <p class="fight-subtitle-hero">
-          Step into the ring with <strong>Aaditya Raj</strong>. Claim victory to unlock his developer portfolio!
+        <h2 class="fight-modal-title">Boxing Challenge</h2>
+        <p class="fight-modal-desc">
+          Defeat <strong>Aaditya Raj</strong> in the ring to enter his developer portfolio.
         </p>
 
-        <button id="btnStartFight" class="fight-btn-action">
-          <span>START MATCH</span>
-          <span class="btn-icon">🥊</span>
-        </button>
+        <button id="btnStartFight" class="fight-btn-minimal">Start Match →</button>
 
-        <div class="fight-pills-row">
-          <div class="ctrl-pill"><kbd>A</kbd><kbd>D</kbd><span>Move</span></div>
-          <div class="ctrl-pill"><kbd>SPACE</kbd><span>Jump</span></div>
-          <div class="ctrl-pill"><kbd>L-CLICK</kbd><span>Punch</span></div>
-          <div class="ctrl-pill"><kbd>R-CLICK</kbd><span>Block</span></div>
+        <div class="fight-guide-line">
+          <span><kbd>A</kbd> <kbd>D</kbd> Move</span>
+          <span class="sep">·</span>
+          <span><kbd>Space</kbd> Jump</span>
+          <span class="sep">·</span>
+          <span><kbd>Left-Click</kbd> Punch</span>
+          <span class="sep">·</span>
+          <span><kbd>Right-Click</kbd> Block</span>
         </div>
       </div>
     </div>
 
     <!-- Victory Overlay -->
     <div id="fightWinOverlay" class="fight-screen-overlay hidden">
-      <div class="fight-modal-box victory-box">
-        <div class="fight-pill-tag win-tag">VICTORY</div>
-        <h1 id="winTitleText" class="fight-title-hero win-title">K.O.! YOU WIN!</h1>
-        <p id="winSubtitleText" class="fight-subtitle-hero">
-          Flawless fight. Welcome to Aaditya Raj's portfolio website.
+      <div class="fight-modal-box">
+        <h2 id="winTitleText" class="fight-modal-title win">Victory</h2>
+        <p id="winSubtitleText" class="fight-modal-desc">
+          Match won. Welcome to Aaditya Raj's developer portfolio.
         </p>
-        <button id="btnEnterFromFight" class="fight-btn-action win">
-          <span>Enter Website</span>
-          <span class="btn-icon">→</span>
-        </button>
+        <button id="btnEnterFromFight" class="fight-btn-minimal win">Enter Website →</button>
       </div>
     </div>
 
     <!-- Defeat Overlay -->
     <div id="fightLoseOverlay" class="fight-screen-overlay hidden">
-      <div class="fight-modal-box defeat-box">
-        <div class="fight-pill-tag lose-tag">KNOCKED OUT</div>
-        <h1 class="fight-title-hero lose-title">DEFEATED!</h1>
-        <p class="fight-subtitle-hero">
-          Aaditya landed the counter punch. Rematch and claim victory!
+      <div class="fight-modal-box">
+        <h2 class="fight-modal-title defeat">Knocked Out</h2>
+        <p class="fight-modal-desc">
+          Aaditya countered your attack. Rematch and claim victory.
         </p>
-        <div class="modal-buttons-group">
-          <button id="btnRetryFight" class="fight-btn-action">Rematch / Try Again</button>
-          <button id="btnSkipFromLose" class="btn-skip-secondary">Skip to Website →</button>
+        <div class="modal-btn-row">
+          <button id="btnRetryFight" class="fight-btn-minimal">Rematch</button>
+          <button id="btnSkipFromLose" class="fight-btn-subtle">Skip to Website →</button>
         </div>
       </div>
     </div>

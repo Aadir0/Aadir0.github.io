@@ -980,167 +980,138 @@ a {
   display: none;
 }
 
+/* Minimalist Game Modal */
 .fight-modal-box {
-  background: rgba(13, 17, 28, 0.92);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 20px;
-  padding: 2.75rem 3.25rem;
-  max-width: 580px;
-  width: 92%;
-  box-shadow: 0 25px 65px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  background: rgba(14, 18, 26, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 2.25rem 2.5rem;
+  max-width: 460px;
+  width: 90%;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
   text-align: center;
 }
 
-.fight-pill-tag {
-  display: inline-block;
-  font-family: var(--font-code);
-  font-size: 0.725rem;
+.fight-modal-title {
+  font-family: var(--font-primary);
+  font-size: 1.45rem;
   font-weight: 700;
-  color: #F59E0B;
-  background: rgba(245, 158, 11, 0.12);
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  padding: 0.25rem 0.85rem;
-  border-radius: 20px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 0.85rem;
-}
-
-.fight-pill-tag.win-tag {
-  color: #22C55E;
-  background: rgba(34, 197, 94, 0.12);
-  border-color: rgba(34, 197, 94, 0.4);
-}
-
-.fight-pill-tag.lose-tag {
-  color: #EF4444;
-  background: rgba(239, 68, 68, 0.12);
-  border-color: rgba(239, 68, 68, 0.4);
-}
-
-.fight-title-hero {
-  font-family: var(--font-display);
-  font-size: clamp(2rem, 5vw, 3rem);
-  font-weight: 800;
   color: #FFFFFF;
-  letter-spacing: -0.02em;
-  margin-bottom: 0.6rem;
-  line-height: 1.15;
+  letter-spacing: -0.015em;
+  margin-bottom: 0.5rem;
+  line-height: 1.25;
 }
 
-.fight-title-hero.win-title {
+.fight-modal-title.win {
   color: #22C55E;
-  text-shadow: 0 0 25px rgba(34, 197, 94, 0.5);
 }
 
-.fight-title-hero.lose-title {
+.fight-modal-title.defeat {
   color: #EF4444;
-  text-shadow: 0 0 25px rgba(239, 68, 68, 0.5);
 }
 
-.fight-subtitle-hero {
-  font-size: 1rem;
+.fight-modal-desc {
+  font-family: var(--font-primary);
+  font-size: 0.925rem;
   color: #94A3B8;
-  line-height: 1.6;
-  margin-bottom: 1.85rem;
-  max-width: 440px;
-  margin-left: auto;
-  margin-right: auto;
+  line-height: 1.55;
+  margin-bottom: 1.6rem;
 }
 
-.fight-btn-action {
+.fight-modal-desc strong {
+  color: #F8FAFC;
+}
+
+.fight-btn-minimal {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.65rem;
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, #B8500C, #EA580C);
+  font-family: var(--font-primary);
+  font-size: 0.925rem;
+  font-weight: 600;
+  background: #B8500C;
   color: #FFFFFF;
-  border: none;
-  border-radius: 12px;
-  padding: 0.95rem 2.6rem;
-  cursor: pointer;
-  letter-spacing: 0.02em;
-  box-shadow: 0 6px 25px rgba(234, 88, 12, 0.45);
-  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
-}
-
-.fight-btn-action:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 32px rgba(234, 88, 12, 0.65);
-  filter: brightness(1.08);
-}
-
-.fight-btn-action.win {
-  background: linear-gradient(135deg, #16A34A, #10B981);
-  box-shadow: 0 6px 25px rgba(16, 185, 129, 0.45);
-}
-
-.fight-btn-action.win:hover {
-  box-shadow: 0 10px 32px rgba(16, 185, 129, 0.65);
-}
-
-.modal-buttons-group {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  margin-top: 1.25rem;
-}
-
-.btn-skip-secondary {
-  display: inline-block;
-  font-family: var(--font-code);
-  font-size: 0.85rem;
-  color: #94A3B8;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-  padding: 0.85rem 1.6rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-skip-secondary:hover {
-  color: #FFFFFF;
-  border-color: #FFFFFF;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.fight-pills-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.55rem;
-  margin-top: 1.85rem;
-}
-
-.ctrl-pill {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 0.35rem 0.75rem;
-  border-radius: 8px;
+  border-radius: 6px;
+  padding: 0.75rem 1.85rem;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: all 0.18s ease;
+  box-shadow: 0 4px 12px rgba(184, 80, 12, 0.25);
+}
+
+.fight-btn-minimal:hover {
+  background: #C2410C;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(184, 80, 12, 0.35);
+}
+
+.fight-btn-minimal.win {
+  background: #15803D;
+  box-shadow: 0 4px 12px rgba(21, 128, 61, 0.25);
+}
+
+.fight-btn-minimal.win:hover {
+  background: #166534;
+}
+
+.fight-btn-subtle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: transparent;
+  color: #94A3B8;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 6px;
+  padding: 0.7rem 1.4rem;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.fight-btn-subtle:hover {
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.modal-btn-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.fight-guide-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   font-family: var(--font-code);
   font-size: 0.75rem;
-  color: #CBD5E1;
+  color: #94A3B8;
 }
 
-.ctrl-pill kbd {
-  background: rgba(245, 158, 11, 0.18);
-  border: 1px solid rgba(245, 158, 11, 0.4);
-  color: #F59E0B;
-  font-weight: 800;
+.fight-guide-line kbd {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #E2E8F0;
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
   font-size: 0.7rem;
-  padding: 0.1rem 0.4rem;
-  border-radius: 4px;
+}
+
+.fight-guide-line .sep {
+  color: #475569;
 }
 
 /* Floating Impact Damage Text */

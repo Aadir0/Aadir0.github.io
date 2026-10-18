@@ -467,12 +467,13 @@ class ArenaFightingGame {
     this.isVictory = false;
     this.isDefeat = false;
     this.isHardcore = false;
+    this.hasDefeatedHardcore = localStorage.getItem('hardcore_ai_defeated') === 'true';
 
     this.keys = { left: false, right: false };
     this.clock = new THREE.Clock();
 
     this.aiTimer = 0;
-    this.aiNextAction = 0.7;
+    this.aiNextAction = 0.5;
 
     this.init();
   }
@@ -733,6 +734,11 @@ class ArenaFightingGame {
   }
 
   activateHardcoreMode(forceImmediate = true) {
+    // Only allow trigger if player hasn't defeated the hardcore AI yet!
+    if (this.hasDefeatedHardcore) {
+      return;
+    }
+
     this.isHardcore = true;
     audioFX.isMuted = false;
     audioFX.init();
@@ -752,7 +758,7 @@ class ArenaFightingGame {
 
     const banner = document.getElementById('hardcoreBannerToast');
     if (banner) {
-      banner.innerHTML = `🔥 RAGED BOSS MODE ACTIVATED 🔥`;
+      banner.innerHTML = `🔥 HARDCORE BOSS MODE 🔥`;
       banner.classList.remove('hidden');
       setTimeout(() => banner.classList.add('hidden'), 4500);
     }
@@ -788,10 +794,29 @@ class ArenaFightingGame {
   checkHit(attacker, defender, damage, label) {
     const dist = Math.abs(attacker.x - defender.x);
     if (dist < 1.95) {
-      if (defender.isAI && Math.random() < (this.isHardcore ? 0.35 : 0.22) && !defender.isAttacking) {
-        defender.x += defender.facing * -0.6;
-        this.showDamageText('SLIP!', defender.x);
-        return;
+      // Challenging AI Defensive Reactions (Slipping & Guard Blocking with Counters)
+      if (defender.isAI && !defender.isAttacking) {
+        const roll = Math.random();
+        if (roll < (this.isHardcore ? 0.35 : 0.24)) {
+          // Slip backward out of range
+          defender.x += defender.facing * -0.65;
+          defender.x = Math.max(-4.2, Math.min(4.2, defender.x));
+          this.showDamageText('SLIP!', defender.x);
+          return;
+        } else if (roll < (this.isHardcore ? 0.70 : 0.48)) {
+          // Guard block absorbing 84% damage + immediate counter jab!
+          defender.isBlocking = true;
+          setTimeout(() => {
+            if (defender) defender.isBlocking = false;
+          }, 320);
+          setTimeout(() => {
+            if (defender && !defender.isDead && this.isPlaying && defender.punchCooldown <= 0.15) {
+              defender.punchCooldown = 0;
+              defender.punch();
+              this.checkHit(defender, attacker, 14, 'COUNTER!');
+            }
+          }, 220);
+        }
       }
 
       defender.takeDamage(damage, damage > 18);
@@ -886,23 +911,26 @@ class ArenaFightingGame {
     const winSubtitle = document.getElementById('winSubtitleText');
 
     if (this.isHardcore) {
+      this.hasDefeatedHardcore = true;
+      localStorage.setItem('hardcore_ai_defeated', 'true');
+
       if (winTitle) {
-        winTitle.innerHTML = `👑 GODLIKE! BOSS CONQUERED!`;
+        winTitle.textContent = `Hardcore Boss Defeated`;
         winTitle.style.color = '#F59E0B';
       }
       if (winSubtitle) {
-        winSubtitle.innerHTML = `Incredible! You defeated <strong>Aaditya Raj (AI)</strong> in Raged Boss Mode. You have unlocked champion status!`;
+        winSubtitle.innerHTML = `You conquered <strong>Aaditya Raj (AI)</strong> in Hardcore Mode. Champion status achieved.`;
       }
       document.body.classList.add('boss-champion');
       const badge = document.getElementById('bossAchievementBanner');
       if (badge) badge.classList.remove('hidden');
     } else {
       if (winTitle) {
-        winTitle.textContent = `K.O.! YOU WIN!`;
+        winTitle.textContent = `Victory`;
         winTitle.style.color = '#22C55E';
       }
       if (winSubtitle) {
-        winSubtitle.textContent = `Flawless fight. Welcome to Aaditya Raj's portfolio website.`;
+        winSubtitle.textContent = `Match won. Welcome to Aaditya Raj's portfolio website.`;
       }
     }
 
@@ -1015,41 +1043,66 @@ class ArenaFightingGame {
     const dist = Math.abs(this.enemy.x - this.player.x);
     this.aiTimer += dt;
 
-    const speed = this.isHardcore ? 4.2 : 2.8;
-    if (dist > 1.85) {
+    // Responsive footwork & distance control
+    const speed = this.isHardcore ? 4.5 : 3.4;
+    if (dist > 1.8) {
       this.enemy.vx = (this.player.x < this.enemy.x) ? -speed : speed;
+    } else if (dist < 1.3) {
+      // Step back slightly if overcrowded
+      this.enemy.vx = (this.player.x < this.enemy.x) ? speed * 0.7 : -speed * 0.7;
     } else {
       this.enemy.vx = 0;
     }
 
+    // Dynamic jump counter
+    if (!this.player.isGrounded && this.enemy.isGrounded && Math.random() < 0.35) {
+      this.enemy.vy = 11.5;
+      this.enemy.isGrounded = false;
+      audioFX.playWhoosh();
+    }
+
+    // Faster action decision rhythm
     if (this.aiTimer > this.aiNextAction) {
       this.aiTimer = 0;
-      this.aiNextAction = (this.isHardcore ? 0.42 : 0.75) + Math.random() * 0.35;
+      this.aiNextAction = (this.isHardcore ? 0.28 : 0.42) + Math.random() * 0.25;
 
       if (dist < 2.15 && this.enemy.punchCooldown <= 0) {
         const roll = Math.random();
 
-        if (roll > (this.isHardcore ? 0.2 : 0.35)) {
+        if (roll > (this.isHardcore ? 0.15 : 0.28)) {
           const didPunch = this.enemy.punch();
           if (didPunch) {
-            const dmg = (this.isHardcore ? 19 : 13) + Math.floor(Math.random() * 4);
+            const dmg = (this.isHardcore ? 20 : 14) + Math.floor(Math.random() * 4);
             this.checkHit(this.enemy, this.player, dmg, this.isHardcore ? 'BOSS HOOK!' : 'JAB!');
 
-            if (this.isHardcore && Math.random() > 0.45) {
+            // 1-2 Combination (Jab into Cross)
+            if (this.isHardcore || Math.random() < 0.42) {
               setTimeout(() => {
                 if (this.enemy && !this.enemy.isDead && this.isPlaying) {
                   this.enemy.punchCooldown = 0;
                   this.enemy.punch();
-                  this.checkHit(this.enemy, this.player, 16, 'CROSS!');
+                  const followUpDmg = this.isHardcore ? 18 : 13;
+                  this.checkHit(this.enemy, this.player, followUpDmg, 'CROSS!');
+
+                  // In Hardcore: 3-hit flurry finish
+                  if (this.isHardcore && Math.random() < 0.5) {
+                    setTimeout(() => {
+                      if (this.enemy && !this.enemy.isDead && this.isPlaying) {
+                        this.enemy.punchCooldown = 0;
+                        this.enemy.punch();
+                        this.checkHit(this.enemy, this.player, 22, 'UPPERCUT!');
+                      }
+                    }, 200);
+                  }
                 }
-              }, 220);
+              }, 190);
             }
           }
         } else {
           this.enemy.isBlocking = true;
           setTimeout(() => {
             if (this.enemy) this.enemy.isBlocking = false;
-          }, 450);
+          }, 360);
         }
       }
     }
@@ -1060,6 +1113,11 @@ class ArenaFightingGame {
 (function initGlobalEasterEgg() {
   let secretBuffer = '';
   window.addEventListener('keydown', (e) => {
+    // Hardcore mode CANNOT be triggered again if player has already defeated the hardcore AI!
+    if (localStorage.getItem('hardcore_ai_defeated') === 'true') {
+      return;
+    }
+
     if (e.key && e.key.length === 1) {
       secretBuffer += e.key.toLowerCase();
       if (secretBuffer.length > 35) secretBuffer = secretBuffer.slice(-35);
