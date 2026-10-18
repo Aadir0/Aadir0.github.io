@@ -359,10 +359,63 @@ class BoxerRig {
     this.legL.add(bootL);
   }
 
+  reset(x, facing) {
+    this.hp = this.maxHp;
+    this.x = x;
+    this.y = 0;
+    this.z = 0;
+    this.vx = 0;
+    this.vy = 0;
+    this.isGrounded = true;
+    this.isAttacking = false;
+    this.isKicking = false;
+    this.isBlocking = false;
+    this.isHurt = false;
+    this.isDead = false;
+    this.facing = facing;
+    this.attackTimer = 0;
+    this.kickTimer = 0;
+    this.punchCooldown = 0;
+    this.kickCooldown = 0;
+    this.hurtTimer = 0;
+    this.emote = null;
+    this.emoteT = 0;
+
+    // Reset root position and rotation to neutral fight stance facing each other
+    this.root.position.set(this.x, 0, 0);
+    this.root.rotation.set(0, facing === 1 ? Math.PI / 2 : -Math.PI / 2, 0);
+
+    // Reset chest, arms, and legs to neutral upright pose
+    if (this.chest) {
+      this.chest.position.set(0, 1.95, 0);
+      this.chest.rotation.set(0, 0, 0);
+      this.chest.material.color.setHex(this.isAI ? (this.isHardcore ? 0x991B1B : 0xE2AA68) : 0xD5A272);
+    }
+    if (this.armR) {
+      this.armR.position.set(0.62, 0.15, 0.1);
+      this.armR.rotation.set(0, 0, 0);
+    }
+    if (this.armL) {
+      this.armL.position.set(-0.62, 0.15, 0.1);
+      this.armL.rotation.set(0, 0, 0);
+    }
+    if (this.legR) {
+      this.legR.position.set(0.28, 0.9, 0);
+      this.legR.rotation.set(0, 0, 0);
+    }
+    if (this.legL) {
+      this.legL.position.set(-0.28, 0.9, 0);
+      this.legL.rotation.set(0, 0, 0);
+    }
+  }
+
   updateTransform() {
     this.root.position.set(this.x, this.y, this.z);
-    // Spin emote rotates independently; don't fight it every frame
-    if (this.emote !== 'spin' && this.emote !== 'dance' && this.emote !== 'taunt') {
+    if (this.emote) {
+      if (this.emote !== 'spin' && this.emote !== 'taunt') {
+        this.root.rotation.y = 0; // Face forward towards audience during celebration
+      }
+    } else {
       this.root.rotation.y = this.facing === 1 ? Math.PI / 2 : -Math.PI / 2;
     }
   }
@@ -422,6 +475,10 @@ class BoxerRig {
     if (this.isDead && type !== 'taunt') return;
     this.emote = type;
     this.emoteT = 0;
+    this.vx = 0;
+    this.vy = 0;
+    this.y = 0;
+    this.isGrounded = true;
     this.isAttacking = false;
     this.isKicking = false;
     this.isBlocking = false;
@@ -435,8 +492,11 @@ class BoxerRig {
     this.legL.rotation.set(0, 0, 0);
     this.legR.position.set(0.28, 0.9, 0);
     this.legL.position.set(-0.28, 0.9, 0);
-    this.chest.rotation.x = 0;
-    this.chest.rotation.z = 0;
+    this.chest.rotation.set(0, 0, 0);
+    this.chest.position.set(0, 1.95, 0);
+    if (type !== 'spin') {
+      this.root.rotation.y = 0;
+    }
   }
 
   updateEmote(dt) {
@@ -459,22 +519,27 @@ class BoxerRig {
     }
 
     if (this.emote === 'raise') {
-      // Traditional arms-up celebration with a little hop
-      this.armR.position.set(0.34, 0.62, 0.30);
-      this.armL.position.set(-0.34, 0.62, 0.30);
+      // Traditional arms-up celebration with enthusiastic victory hops
+      this.root.rotation.y = 0;
+      this.armR.position.set(0.34, 0.65, 0.28);
+      this.armL.position.set(-0.34, 0.65, 0.28);
       this.armR.rotation.z = -0.45;
       this.armL.rotation.z = 0.45;
-      this.chest.position.y = 1.95 + Math.sin(this.animTime * 8) * 0.07;
+      this.armR.rotation.x = -0.2;
+      this.armL.rotation.x = -0.2;
+      this.y = Math.abs(Math.sin(t * 7)) * 0.2;
+      this.chest.position.y = 1.95 + Math.sin(t * 8) * 0.05;
       return;
     }
 
     if (this.emote === 'flex') {
       // Double bicep flex, slow power pulse
-      const pulse = 1 + Math.sin(t * 5) * 0.12;
-      this.armR.position.set(0.40, 0.30, 0.42);
-      this.armL.position.set(-0.40, 0.30, 0.42);
-      this.armR.rotation.z = -0.9 * pulse;
-      this.armL.rotation.z = 0.9 * pulse;
+      this.root.rotation.y = 0;
+      const pulse = 1 + Math.sin(t * 5) * 0.14;
+      this.armR.position.set(0.40, 0.32, 0.40);
+      this.armL.position.set(-0.40, 0.32, 0.40);
+      this.armR.rotation.z = -0.95 * pulse;
+      this.armL.rotation.z = 0.95 * pulse;
       this.armR.rotation.x = -1.35;
       this.armL.rotation.x = -1.35;
       this.chest.rotation.x = -0.14;
@@ -484,6 +549,7 @@ class BoxerRig {
 
     if (this.emote === 'dance') {
       // Side-step dance: alternating arms + hip sway
+      this.root.rotation.y = 0;
       const s = Math.sin(t * 9);
       const c = Math.cos(t * 9);
       this.armR.position.set(0.46, 0.5 + s * 0.28, 0.36);
@@ -499,14 +565,14 @@ class BoxerRig {
 
     if (this.emote === 'taunt') {
       // "Come on!" beckon, for the AI after a win
+      this.root.rotation.y = Math.sin(t * 2) * 0.12;
       const swing = Math.sin(t * 6);
-      this.armR.position.set(0.55, 0.45 + swing * 0.12, 0.32);
+      this.armR.position.set(0.55, 0.45 + swing * 0.14, 0.32);
       this.armR.rotation.z = -0.5;
-      this.armR.rotation.x = -0.9 + swing * 0.5;
-      this.armL.position.set(-0.3, 0.15, 0.42);
+      this.armR.rotation.x = -0.9 + swing * 0.55;
+      this.armL.position.set(-0.3, 0.18, 0.40);
       this.armL.rotation.z = 0.25;
       this.chest.position.y = 1.95 + Math.sin(t * 10) * 0.05;
-      this.root.rotation.y += Math.sin(t * 3) * 0.004;
       return;
     }
 
@@ -523,7 +589,12 @@ class BoxerRig {
       this.kickCooldown = Math.max(0, this.kickCooldown - dt);
     }
 
-    if (!this.isGrounded) {
+    // Freeze horizontal speed when dead or celebrating so fighters never slide
+    if (this.emote || this.isDead) {
+      this.vx = 0;
+    }
+
+    if (!this.isGrounded && !this.emote) {
       this.vy -= 26 * dt;
       this.y += this.vy * dt;
       if (this.y <= 0) {
@@ -1261,6 +1332,7 @@ class ArenaFightingGame {
       return;
     }
 
+    this.destroyed = false;
     this.isHardcore = true;
     this.difficulty = 'hardcore';
     audioFX.isMuted = false;
@@ -1371,19 +1443,19 @@ class ArenaFightingGame {
     const base = this.camCurrent;
 
     if (this.emoteMode) {
-      // Victory / Defeat showcase: slow cinematic orbit around the winning fighter
+      // Victory / Defeat showcase: smooth cinematic orbit around the winning fighter
       this.camAngle += dt * 0.45;
       const winner = this.isVictory ? this.player : this.enemy;
       const winnerX = winner ? winner.x : 0;
-      const radius = 6.4;
+      const radius = 5.6;
       const target = new THREE.Vector3(
-        Math.sin(this.camAngle) * radius + winnerX * 0.4,
-        2.9,
+        winnerX + Math.sin(this.camAngle) * radius,
+        2.6,
         Math.cos(this.camAngle) * radius
       );
-      base.lerp(target, Math.min(1, dt * 2.4));
+      base.lerp(target, Math.min(1, dt * 2.8));
       this.camera.position.copy(base);
-      this.camera.lookAt(winnerX * 0.6, 1.5 + Math.sin(this.envTime * 1.5) * 0.05, 0);
+      this.camera.lookAt(winnerX, 1.7, 0);
       return;
     }
 
@@ -1487,6 +1559,13 @@ class ArenaFightingGame {
   showDamageText(text, x) {
     const el = document.createElement('div');
     el.className = 'floating-hit-text';
+    if (text.includes('KICK') || text.includes('UPPERCUT') || text.includes('ROUNDHOUSE')) {
+      el.classList.add('crit-hit');
+    } else if (text.includes('BLOCKED')) {
+      el.classList.add('blocked-hit');
+    } else if (text.includes('SLIP')) {
+      el.classList.add('slip-hit');
+    }
     el.textContent = text;
     el.style.left = `${(x + 5.5) / 11 * 100}%`;
     el.style.top = '44%';
@@ -1525,40 +1604,23 @@ class ArenaFightingGame {
     }
     this.enemy.maxCooldown = this.diff().aiMaxCd;
 
-    this.player.hp = 100;
-    this.player.isDead = false;
-    this.player.punchCooldown = 0;
-    this.player.kickCooldown = 0;
-    this.player.isAttacking = false;
-    this.player.isKicking = false;
-    this.player.x = -2.8;
-    this.player.root.rotation.z = 0;
+    // Reset both fighters cleanly into upright combat stances
+    this.player.reset(-2.8, 1);
+    this.enemy.reset(2.8, -1);
 
-    this.enemy.hp = 100;
-    this.enemy.isDead = false;
-    this.enemy.punchCooldown = 0;
-    this.enemy.kickCooldown = 0;
-    this.enemy.isAttacking = false;
-    this.enemy.isKicking = false;
-    this.enemy.x = 2.8;
-    this.enemy.root.rotation.z = 0;
-
-    // Clear celebration/emote state from any previous round
-    [this.player, this.enemy].forEach(b => {
-      if (b.emote) b.emote = null;
-      b.root.rotation.z = 0;
-      b.root.rotation.y = 0;
-      b.chest.position.y = 1.95;
-      b.chest.rotation.x = 0;
-      b.legR.position.set(0.28, 0.9, 0);
-      b.legL.position.set(-0.28, 0.9, 0);
-      b.legR.rotation.set(0, 0, 0);
-      b.legL.rotation.set(0, 0, 0);
-    });
+    // Reset camera immediately to pristine standard combat viewpoint
     this.emoteMode = null;
     this.camAngle = 0;
-    this.setOverlay(null);
+    this.shakeTime = 0;
+    this.shakeAmp = 0;
+    this.camCurrent.set(0, 3.0, 9.8);
+    this.camera.position.set(0, 3.0, 9.8);
+    this.camera.lookAt(0, 1.5, 0);
 
+    this.keys.left = false;
+    this.keys.right = false;
+
+    this.setOverlay(null);
     this.updateHUD();
     audioFX.playBell();
     this.enterMobileLandscape();
@@ -1583,12 +1645,16 @@ class ArenaFightingGame {
     this.isPlaying = false;
     this.isVictory = true;
     this.emoteMode = 'victory';
+    this.keys.left = false;
+    this.keys.right = false;
+    this.player.vx = 0;
+    this.enemy.vx = 0;
     audioFX.playVictory();
     audioFX.playCrowdCheer();
     this.checkOrientation();
     this.setOverlay('win');
 
-    // Automatically randomize victory celebration emote
+    // Winner celebrates right at their current position!
     const victoryEmotes = ['dance', 'flex', 'spin', 'raise'];
     const chosenEmote = victoryEmotes[Math.floor(Math.random() * victoryEmotes.length)];
     this.player.startEmote(chosenEmote);
@@ -1629,16 +1695,21 @@ class ArenaFightingGame {
     this.isPlaying = false;
     this.isDefeat = true;
     this.emoteMode = 'defeat';
+    this.keys.left = false;
+    this.keys.right = false;
+    this.player.vx = 0;
+    this.enemy.vx = 0;
     audioFX.playBell();
     audioFX.playCrowdCheer();
     this.checkOrientation();
     this.setOverlay('lose');
 
-    // The AI gloats with a randomized celebration emote
+    // The AI gloats right at their current position with a randomized celebration emote
     if (this.enemy && !this.enemy.isDead) {
       const aiEmotes = ['taunt', 'dance', 'flex', 'spin', 'raise'];
       const chosenAiEmote = aiEmotes[Math.floor(Math.random() * aiEmotes.length)];
       this.enemy.startEmote(chosenAiEmote);
+      this.spawnConfetti(this.enemy.x, 3.4, 70);
     }
   }
 

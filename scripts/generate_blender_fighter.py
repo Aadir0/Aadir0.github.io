@@ -163,3 +163,4 @@ if __name__ == '__main__':
     blend_path = os.path.join(models_dir, 'fighter.blend')
     glb_path = os.path.join(models_dir, 'fighter.glb')
     create_lowpoly_fighter(blend_path, glb_path)
+
