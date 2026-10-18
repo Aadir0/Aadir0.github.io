@@ -13,7 +13,84 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollProgress();
   initActiveNav();
   initBackToTop();
+  initWebsiteOrientation();
 });
+
+/* ==========================================================================
+   Mobile Website Orientation Management (Vertical Mode on Entry)
+   ========================================================================== */
+function initWebsiteOrientation() {
+  const dismissBtn = document.getElementById('btnDismissRotateNotice');
+  const notice = document.getElementById('websiteRotateNotice');
+  if (dismissBtn && notice) {
+    dismissBtn.addEventListener('click', () => {
+      notice.classList.add('hidden');
+      notice.dataset.dismissed = 'true';
+    });
+  }
+
+  const handleOrientationUpdate = () => {
+    checkWebsiteOrientationPrompt();
+  };
+
+  window.addEventListener('resize', handleOrientationUpdate);
+  window.addEventListener('orientationchange', () => {
+    setTimeout(handleOrientationUpdate, 250);
+  });
+}
+
+function checkWebsiteOrientationPrompt() {
+  const notice = document.getElementById('websiteRotateNotice');
+  const fightScreen = document.getElementById('fightScreenRoot');
+  if (!notice) return;
+
+  // If fight screen is still active, don't show the website notice
+  if (fightScreen && !fightScreen.classList.contains('dismissed') && fightScreen.style.display !== 'none') {
+    notice.classList.add('hidden');
+    return;
+  }
+
+  if (notice.dataset.dismissed === 'true') {
+    return;
+  }
+
+  const isTouch = window.matchMedia('(pointer: coarse)').matches || 
+                  'ontouchstart' in window || 
+                  (typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0);
+  const isLandscape = window.innerWidth > window.innerHeight;
+
+  // When browsing website on mobile, if device is held horizontally, show orientation hint
+  if (isTouch && isLandscape) {
+    notice.classList.remove('hidden');
+  } else {
+    notice.classList.add('hidden');
+  }
+}
+
+function exitLandscapeForWebsite() {
+  // Exit fullscreen if active
+  if (document.fullscreenElement || document.webkitFullscreenElement) {
+    const exitFs = document.exitFullscreen || document.webkitExitFullscreen;
+    if (exitFs) {
+      try {
+        const p = exitFs.call(document);
+        if (p && p.catch) p.catch(() => {});
+      } catch (e) {}
+    }
+  }
+
+  // Release landscape lock and restore natural vertical portrait mode
+  if (typeof screen !== 'undefined' && screen.orientation) {
+    if (screen.orientation.unlock) {
+      try { screen.orientation.unlock(); } catch (e) {}
+    }
+    if (screen.orientation.lock) {
+      try { screen.orientation.lock('portrait').catch(() => {}); } catch (e) {}
+    }
+  }
+
+  setTimeout(checkWebsiteOrientationPrompt, 300);
+}
 
 /* ==========================================================================
    Mobile & Desktop Flip Card Interactions
@@ -51,6 +128,8 @@ function initBoxingEntrance() {
 
   // Function to completely kill the game so it NEVER runs in the background
   const terminateAndEnter = () => {
+    exitLandscapeForWebsite();
+
     if (window.fightGame) {
       window.fightGame.destroy(); // Stops requestAnimationFrame & audio completely
     }
@@ -58,6 +137,7 @@ function initBoxingEntrance() {
       fightScreen.classList.add('dismissed');
       setTimeout(() => {
         fightScreen.style.display = 'none'; // Completely removes from rendering
+        checkWebsiteOrientationPrompt();
       }, 600);
     }
   };

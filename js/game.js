@@ -1795,6 +1795,28 @@ class ArenaFightingGame {
       cancelAnimationFrame(this.animFrameId);
       this.animFrameId = null;
     }
+
+    const prompt = document.getElementById('rotatePrompt');
+    if (prompt) prompt.classList.add('hidden');
+
+    // Release fullscreen & orientation lock so the website returns to normal vertical display
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+      const exitFs = document.exitFullscreen || document.webkitExitFullscreen;
+      if (exitFs) {
+        try {
+          const p = exitFs.call(document);
+          if (p && p.catch) p.catch(() => {});
+        } catch (e) {}
+      }
+    }
+    if (typeof screen !== 'undefined' && screen.orientation) {
+      if (screen.orientation.unlock) {
+        try { screen.orientation.unlock(); } catch (e) {}
+      }
+      if (screen.orientation.lock) {
+        try { screen.orientation.lock('portrait').catch(() => {}); } catch (e) {}
+      }
+    }
   }
 
   animate() {

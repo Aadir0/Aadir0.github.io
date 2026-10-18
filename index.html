@@ -14,7 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="css/style.css?v=3.2">
+  <link rel="stylesheet" href="css/style.css?v=3.3">
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥊</text></svg>">
@@ -156,6 +156,19 @@
   </div>
 
   <!-- ==========================================================================
+       Website Orientation Notice for Mobile (shown if phone stays horizontal)
+       ========================================================================== -->
+  <aside id="websiteRotateNotice" class="website-rotate-notice hidden" aria-live="polite">
+    <div class="container website-rotate-inner">
+      <div class="website-rotate-msg">
+        <span class="rotate-hint-icon">📱</span>
+        <span>Hold your phone vertically for the best portfolio reading experience</span>
+      </div>
+      <button id="btnDismissRotateNotice" class="rotate-hint-close" aria-label="Dismiss banner">✕</button>
+    </div>
+  </aside>
+
+  <!-- ==========================================================================
        Website Header
        ========================================================================== -->
   <header class="site-header">
@@ -279,7 +292,7 @@
             <div class="flip-card-inner">
               <div class="flip-card-front">
                 <img src="https://img.itch.zone/aW1nLzI4NzQyODE0LmpwZWc=/315x250%23c/488o6b.jpeg" alt="Nightmare - A fairy tale banner" loading="lazy">
-                <span class="flip-badge-hint">Hover to Flip</span>
+                <span class="flip-badge-hint"><span class="hint-desktop">Hover to Flip</span><span class="hint-touch">Tap to Flip 🔄</span></span>
               </div>
               <div class="flip-card-back">
                 <h4>Geek-N-Jam Winner</h4>
@@ -321,7 +334,7 @@
             <div class="flip-card-inner">
               <div class="flip-card-front">
                 <img src="https://img.itch.zone/aW1nLzI1NDA0OTIxLnBuZw==/315x250%23c/ZzIGKB.png" alt="Time Traveler banner" loading="lazy">
-                <span class="flip-badge-hint">Hover to Flip</span>
+                <span class="flip-badge-hint"><span class="hint-desktop">Hover to Flip</span><span class="hint-touch">Tap to Flip 🔄</span></span>
               </div>
               <div class="flip-card-back">
                 <h4>Hackathon Winner</h4>
@@ -363,7 +376,7 @@
             <div class="flip-card-inner">
               <div class="flip-card-front">
                 <img src="https://img.itch.zone/aW1nLzI0ODI3NzgyLmpwZWc=/315x250%23c/aNL%2FZM.jpeg" alt="ILLegal Moves banner" loading="lazy">
-                <span class="flip-badge-hint">Hover to Flip</span>
+                <span class="flip-badge-hint"><span class="hint-desktop">Hover to Flip</span><span class="hint-touch">Tap to Flip 🔄</span></span>
               </div>
               <div class="flip-card-back">
                 <h4>StarCade Game Jam</h4>
@@ -404,7 +417,7 @@
             <div class="flip-card-inner">
               <div class="flip-card-front">
                 <img src="https://img.itch.zone/aW1nLzMwMTg2ODI4LmdpZg==/315x250%23c/V02WAX.gif" alt="DriftIT banner" loading="lazy">
-                <span class="flip-badge-hint">Hover to Flip</span>
+                <span class="flip-badge-hint"><span class="hint-desktop">Hover to Flip</span><span class="hint-touch">Tap to Flip 🔄</span></span>
               </div>
               <div class="flip-card-back">
                 <h4>2-Player Racing</h4>
@@ -446,7 +459,7 @@
             <div class="flip-card-inner">
               <div class="flip-card-front">
                 <img src="https://img.itch.zone/aW1nLzI1NzM2NDY2LnBuZw==/315x250%23c/679iCV.png" alt="Strange Rooms banner" loading="lazy">
-                <span class="flip-badge-hint">Hover to Flip</span>
+                <span class="flip-badge-hint"><span class="hint-desktop">Hover to Flip</span><span class="hint-touch">Tap to Flip 🔄</span></span>
               </div>
               <div class="flip-card-back">
                 <h4>Brackeys Jam Entry</h4>
@@ -491,7 +504,7 @@
                   <span style="font-size: 2.5rem; margin-bottom: 0.35rem;">🚂</span>
                   <span style="font-family: var(--font-code); font-size: 0.85rem; color: #F59E0B;">The Last Train</span>
                 </div>
-                <span class="flip-badge-hint">Hover to Flip</span>
+                <span class="flip-badge-hint"><span class="hint-desktop">Hover to Flip</span><span class="hint-touch">Tap to Flip 🔄</span></span>
               </div>
               <div class="flip-card-back">
                 <h4>Atmospheric Narrative</h4>
@@ -534,7 +547,7 @@
                   <span style="font-size: 2.5rem; margin-bottom: 0.35rem;">🐉</span>
                   <span style="font-family: var(--font-code); font-size: 0.85rem; color: #38BDF8;">Dragons Quest</span>
                 </div>
-                <span class="flip-badge-hint">Hover to Flip</span>
+                <span class="flip-badge-hint"><span class="hint-desktop">Hover to Flip</span><span class="hint-touch">Tap to Flip 🔄</span></span>
               </div>
               <div class="flip-card-back">
                 <h4>2D Action Milestone</h4>
@@ -589,7 +602,7 @@
 
           <div class="contact-email-inline">
             <span class="email-label">Direct Email</span>
-            <span class="email-value">aadisingh3217@gmail.com</span>
+            <a href="mailto:aadisingh3217@gmail.com" class="email-value">aadisingh3217@gmail.com</a>
           </div>
 
           <!-- Visual Social Platform Cards -->
@@ -698,7 +711,7 @@
   </script>
 
   <!-- Scripts -->
-  <script src="js/game.js?v=3.2"></script>
-  <script src="js/main.js?v=3.2"></script>
+  <script src="js/game.js?v=3.3"></script>
+  <script src="js/main.js?v=3.3"></script>
 </body>
 </html>
