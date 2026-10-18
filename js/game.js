@@ -1431,10 +1431,11 @@ class ArenaFightingGame {
   }
 
   activateHardcoreMode(forceImmediate = true) {
-    // Only allow trigger if player hasn't defeated the hardcore AI yet!
-    if (this.hasDefeatedHardcore) {
-      return;
-    }
+    // Typing the secret code resets defeat state so the creator/player can always replay
+    this.hasDefeatedHardcore = false;
+    try {
+      localStorage.removeItem('hardcore_ai_defeated');
+    } catch (e) {}
 
     this.destroyed = false;
     this.isHardcore = true;
@@ -2049,26 +2050,54 @@ class ArenaFightingGame {
 // Global Easter Egg Listener: Secret Code "ihatecholebhature"
 (function initGlobalEasterEgg() {
   let secretBuffer = '';
-  window.addEventListener('keydown', (e) => {
-    // Hardcore mode CANNOT be triggered again if player has already defeated the hardcore AI!
-    if (localStorage.getItem('hardcore_ai_defeated') === 'true') {
-      return;
-    }
 
+  const triggerEgg = () => {
+    secretBuffer = '';
+    try {
+      localStorage.removeItem('hardcore_ai_defeated');
+    } catch (e) {}
+
+    if (window.fightGame) {
+      window.fightGame.hasDefeatedHardcore = false;
+      window.fightGame.activateHardcoreMode(true);
+    } else if (typeof ArenaFightingGame !== 'undefined' && document.getElementById('fightCanvas')) {
+      window.fightGame = new ArenaFightingGame('fightCanvas');
+      window.fightGame.activateHardcoreMode(true);
+    }
+  };
+
+  // 1. Keyboard event listener (Desktop physical typing)
+  window.addEventListener('keydown', (e) => {
     if (e.key && e.key.length === 1) {
       secretBuffer += e.key.toLowerCase();
-      if (secretBuffer.length > 35) secretBuffer = secretBuffer.slice(-35);
+      if (secretBuffer.length > 40) secretBuffer = secretBuffer.slice(-40);
       if (secretBuffer.includes('ihatecholebhature')) {
-        secretBuffer = '';
-        if (window.fightGame) {
-          window.fightGame.activateHardcoreMode(true);
-        } else if (typeof ArenaFightingGame !== 'undefined' && document.getElementById('fightCanvas')) {
-          window.fightGame = new ArenaFightingGame('fightCanvas');
-          window.fightGame.activateHardcoreMode(true);
-        }
+        triggerEgg();
       }
     }
   }, true);
+
+  // 2. Input event listener (Mobile software keyboards, copy-paste, or contact form inputs)
+  document.addEventListener('input', (e) => {
+    const val = (e.target && e.target.value ? e.target.value : '').toLowerCase();
+    if (val.includes('ihatecholebhature')) {
+      triggerEgg();
+    }
+  }, true);
+
+  // 3. URL Hash & Query Trigger (e.g., cholebhature.me#ihatecholebhature)
+  const checkUrlTrigger = () => {
+    const hash = (window.location.hash || '').toLowerCase();
+    const search = (window.location.search || '').toLowerCase();
+    if (hash.includes('ihatecholebhature') || search.includes('ihatecholebhature')) {
+      setTimeout(triggerEgg, 300);
+    }
+  };
+  checkUrlTrigger();
+  window.addEventListener('hashchange', checkUrlTrigger);
+
+  // 4. Console shortcut for testing: ihatecholebhature()
+  window.ihatecholebhature = triggerEgg;
 })();
 
 window.ArenaFightingGame = ArenaFightingGame;
