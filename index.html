@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Aaditya Raj — Indie Game Developer</title>
   <meta name="description" content="Portfolio of Aaditya Raj. Computer Science student, indie game developer, Student Ambassador at GDAI.">
   <meta name="author" content="Aaditya Raj">
@@ -26,6 +26,7 @@
        ========================================================================== -->
   <div id="fightScreenRoot" class="fighter-screen">
     <canvas id="fightCanvas"></canvas>
+    <div class="fight-vignette" aria-hidden="true"></div>
 
     <!-- Hardcore Mode Banner Toast -->
     <div id="hardcoreBannerToast" class="hardcore-banner hidden">
@@ -70,8 +71,8 @@
       </div>
     </div>
 
-    <!-- Start Overlay (Clean, Minimal Modal) -->
-    <div id="fightStartOverlay" class="fight-screen-overlay">
+    <!-- Start Overlay (Minimal, Docked at Bottom) -->
+    <div id="fightStartOverlay" class="fight-screen-overlay bottom-docked">
       <div class="fight-modal-box">
         <h2 class="fight-modal-title">Boxing Challenge</h2>
         <p class="fight-modal-desc">
@@ -87,13 +88,15 @@
           <span class="sep">·</span>
           <span><kbd>Left-Click</kbd> Punch</span>
           <span class="sep">·</span>
+          <span><kbd>E / K</kbd> Kick</span>
+          <span class="sep">·</span>
           <span><kbd>Right-Click</kbd> Block</span>
         </div>
       </div>
     </div>
 
-    <!-- Victory Overlay -->
-    <div id="fightWinOverlay" class="fight-screen-overlay hidden">
+    <!-- Victory Overlay (Docked at Bottom with Clear Backdrop to view Victory Emote) -->
+    <div id="fightWinOverlay" class="fight-screen-overlay bottom-docked transparent-overlay hidden">
       <div class="fight-modal-box">
         <h2 id="winTitleText" class="fight-modal-title win">Victory</h2>
         <p id="winSubtitleText" class="fight-modal-desc">
@@ -103,8 +106,8 @@
       </div>
     </div>
 
-    <!-- Defeat Overlay -->
-    <div id="fightLoseOverlay" class="fight-screen-overlay hidden">
+    <!-- Defeat Overlay (Docked at Bottom with Clear Backdrop to view AI Emote) -->
+    <div id="fightLoseOverlay" class="fight-screen-overlay bottom-docked transparent-overlay hidden">
       <div class="fight-modal-box">
         <h2 class="fight-modal-title defeat">Knocked Out</h2>
         <p class="fight-modal-desc">
@@ -117,15 +120,24 @@
       </div>
     </div>
 
+    <!-- Portrait Rotate Prompt (Mobile) -->
+    <div id="rotatePrompt" class="rotate-prompt hidden">
+      <div class="rotate-icon">📱</div>
+      <p class="rotate-title">Rotate your device</p>
+      <p class="rotate-desc">This match plays in landscape. Turn your phone sideways to fight.</p>
+    </div>
+
     <!-- Bottom Instructions & Skip Button -->
     <div class="fight-bottom-hud">
       <div class="fight-key-guide">
         <span><strong class="key-tag">A / D</strong> Move</span>
         <span><strong class="key-tag">Space</strong> Jump</span>
-        <span><strong class="key-tag">Left Click</strong> Punch (Cooldown)</span>
+        <span><strong class="key-tag">Left Click</strong> Punch</span>
+        <span><strong class="key-tag">E / K</strong> Kick</span>
         <span><strong class="key-tag">Right Click</strong> Block</span>
       </div>
-      <button id="btnSkipFight" class="btn-skip-fight">Skip to Website →</button>
+      <button id="btnSkipFight" class="btn-skip-fight desktop-skip">Skip to Website →</button>
+      <button id="btnSkipFightMobile" class="btn-skip-fight mobile-skip">Skip →</button>
     </div>
 
     <!-- Mobile Dual-Thumb Touch Gamepad -->
@@ -137,6 +149,7 @@
       <div class="mobile-touch-cluster actions">
         <button id="btnMobileJump" class="touch-btn touch-jump-btn" aria-label="Jump">JUMP</button>
         <button id="btnMobileBlock" class="touch-btn touch-block-btn" aria-label="Block">BLOCK</button>
+        <button id="btnMobileKick" class="touch-btn touch-kick-btn" aria-label="Kick">KICK</button>
         <button id="btnMobilePunch" class="touch-btn touch-punch-btn" aria-label="Punch">PUNCH</button>
       </div>
     </div>
@@ -160,6 +173,12 @@
     </div>
   </header>
 
+  <!-- Scroll progress bar -->
+  <div id="scrollProgress" class="scroll-progress" aria-hidden="true"></div>
+
+  <!-- Floating back-to-top -->
+  <button id="backToTop" class="back-to-top hidden" aria-label="Back to top">↑</button>
+
   <!-- Raged Boss Champion Banner (Unlocked only when defeating Aaditya Raj in Boss Mode) -->
   <div id="bossAchievementBanner" class="boss-achievement-toast hidden">
     <div class="container boss-achievement-inner">
@@ -173,10 +192,10 @@
        ========================================================================== -->
   <section id="about" class="site-section">
     <div class="container">
-      <span class="section-tag">Game Developer &amp; Software Undergrad</span>
-      <h1 class="about-hero-title">Aaditya Raj</h1>
+      <span class="section-tag hero-enter">Game Developer &amp; Software Undergrad</span>
+      <h1 class="about-hero-title hero-enter">Aaditya Raj</h1>
       
-      <p class="about-intro">
+      <p class="about-intro hero-enter">
         Crafting responsive gameplay systems, 2D &amp; 3D physics mechanics, and memorable indie games.
       </p>
 
@@ -242,6 +261,7 @@
       </div>
     </div>
   </section>
+
 
   <!-- ==========================================================================
        2. Projects Section with 3D Flip Banners

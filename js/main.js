@@ -1,6 +1,8 @@
 /**
  * Aaditya Raj - Portfolio Application
- * Manages Boxing Game Dismissal (complete cleanup) and Interactive Page Polish
+ * Boxing entrance lifecycle, emote celebration, and interactive page polish.
+ * All fight-screen buttons use event delegation so they keep working
+ * in every game state (including right after a knockout).
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -8,6 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
   initFlipCards();
   initContactForm();
   initScrollAnimations();
+  initScrollProgress();
+  initActiveNav();
+  initBackToTop();
 });
 
 /* ==========================================================================
@@ -29,44 +34,57 @@ function initFlipCards() {
    ========================================================================== */
 function initBoxingEntrance() {
   const fightScreen = document.getElementById('fightScreenRoot');
-  const btnStart = document.getElementById('btnStartFight');
-  const btnRetry = document.getElementById('btnRetryFight');
-  const btnEnter = document.getElementById('btnEnterFromFight');
-  const btnSkip = document.getElementById('btnSkipFight');
+  if (!fightScreen || !document.getElementById('fightCanvas')) return;
 
-  if (document.getElementById('fightCanvas')) {
-    window.fightGame = new ArenaFightingGame('fightCanvas');
+  window.fightGame = new ArenaFightingGame('fightCanvas');
 
-    if (btnStart) {
-      btnStart.addEventListener('click', () => {
-        window.fightGame.startFight();
-      });
-    }
-
-    if (btnRetry) {
-      btnRetry.addEventListener('click', () => {
-        window.fightGame.startFight();
-      });
-    }
-
-    // Function to completely kill the game so it NEVER runs in the background
-    const terminateAndEnter = () => {
+  // Difficulty selection on the start screen
+  document.querySelectorAll('.diff-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
       if (window.fightGame) {
-        window.fightGame.destroy(); // Stops requestAnimationFrame & audio completely
+        window.fightGame.setDifficulty(btn.dataset.diff);
       }
-      if (fightScreen) {
-        fightScreen.classList.add('dismissed');
-        setTimeout(() => {
-          fightScreen.style.display = 'none'; // Completely removes from rendering
-        }, 600);
-      }
-    };
+    });
+  });
 
-    if (btnEnter) btnEnter.addEventListener('click', terminateAndEnter);
-    if (btnSkip) btnSkip.addEventListener('click', terminateAndEnter);
-    const btnSkipFromLose = document.getElementById('btnSkipFromLose');
-    if (btnSkipFromLose) btnSkipFromLose.addEventListener('click', terminateAndEnter);
-  }
+  // Function to completely kill the game so it NEVER runs in the background
+  const terminateAndEnter = () => {
+    if (window.fightGame) {
+      window.fightGame.destroy(); // Stops requestAnimationFrame & audio completely
+    }
+    if (fightScreen) {
+      fightScreen.classList.add('dismissed');
+      setTimeout(() => {
+        fightScreen.style.display = 'none'; // Completely removes from rendering
+      }, 600);
+    }
+  };
+
+  // Single delegated listener: every button in the fight screen keeps working,
+  // no matter which overlay is open or when it was created.
+  fightScreen.addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn || !window.fightGame) return;
+
+    if (btn.classList.contains('diff-btn')) return; // handled above
+
+    switch (btn.id) {
+      case 'btnStartFight':
+      case 'btnRetryFight':
+        window.fightGame.startFight();
+        break;
+      case 'btnEnterFromFight':
+        terminateAndEnter();
+        break;
+      case 'btnSkipFromLose':
+      case 'btnSkipFight':
+      case 'btnSkipFightMobile':
+        terminateAndEnter();
+        break;
+    }
+  });
 }
 
 /* ==========================================================================
@@ -90,6 +108,64 @@ function initScrollAnimations() {
   revealElements.forEach(el => {
     el.classList.add('reveal-on-scroll');
     observer.observe(el);
+  });
+}
+
+/* ==========================================================================
+   Scroll Progress Bar
+   ========================================================================== */
+function initScrollProgress() {
+  const bar = document.getElementById('scrollProgress');
+  if (!bar) return;
+
+  const update = () => {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = max > 0 ? (window.scrollY / max) * 100 : 0;
+    bar.style.width = `${pct}%`;
+  };
+
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update, { passive: true });
+  update();
+}
+
+/* ==========================================================================
+   Active Nav Highlighting
+   ========================================================================== */
+function initActiveNav() {
+  const navItems = document.querySelectorAll('.nav-item');
+  const sections = ['about', 'projects', 'contact']
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+
+  if (!sections.length || !navItems.length) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navItems.forEach(item => {
+          item.classList.toggle('active', item.getAttribute('href') === `#${entry.target.id}`);
+        });
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+
+  sections.forEach(sec => observer.observe(sec));
+}
+
+/* ==========================================================================
+   Floating Back-to-Top Button
+   ========================================================================== */
+function initBackToTop() {
+  const btn = document.getElementById('backToTop');
+  if (!btn) return;
+
+  window.addEventListener('scroll', () => {
+    btn.classList.toggle('hidden', window.scrollY < 550);
+  }, { passive: true });
+
+  btn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 }
 

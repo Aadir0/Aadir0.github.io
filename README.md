@@ -11,21 +11,25 @@ Hosted on GitHub Pages with custom domain [cholebhature.me](https://cholebhature
 
 ---
 
-## 🥊 Interactive 3D Boxing Arena (Three.js)
+## 🥊 Interactive 3D Combat Arena (Three.js & Blender)
 
-The website features an interactive 3D boxing entrance challenge built using **Three.js**:
+The website features an interactive 3D fighting entrance challenge built with **Three.js** and low-poly assets generated via **Blender**:
 - **Combat Mechanics**:
   - `A` / `D` — Move Left & Right
-  - `Space` — Jump
-  - `Left Click` — Throw Punch (with a tactical $0.38\text{s}$ cooldown and real-time stamina meter in the HUD)
-  - `Right Click` (Hold) — Raise Guard to block incoming punches (absorbs 84% damage)
-- **Challenging AI Opponent**:
-  - Opponent **Aaditya Raj (AI)** actively bobs, weaves, slips incoming punches, raises guard, counters, and lands 1-2 punch combinations.
+  - `Space` / `W` — Jump
+  - `Left Click` / `F` / `J` — Punch (responsive cooldown and stamina tracking)
+  - `E` / `K` — Martial-Arts Kick (longer reach, heavier impact, dynamic forward leg thrust)
+  - `Right Click` (Hold) / `S` / `Shift` — Raise Guard to block (absorbs 84% damage)
+- **Opponent AI (Aaditya Raj)**:
+  - Actively bobs, weaves, slips incoming attacks, counters, launches 1-2 punch combos, and throws snap roundhouse kicks.
+- **Victory & Defeat Emotes**:
+  - Automatically randomized celebration emotes (`dance`, `flex`, `spin`, `armsUp`) for the winning fighter.
+  - Minimal bottom-docked HUD with crystal-clear backdrop opacity so the full 3D ring and fighter celebrations remain visible.
 - **Mobile Touch Gamepad**:
-  - Dual-thumb ergonomic on-screen controller (`◀`, `▶`, `JUMP`, `BLOCK`, `PUNCH`) with haptic touch feedback.
+  - Dual-thumb handheld controller (`◀`, `▶`, `JUMP`, `BLOCK`, `KICK`, `PUNCH`) with haptic touch response and portrait-to-landscape guide.
 - **Secret Hardcore Boss Mode**:
-  - Unlockable before your first victory against the AI.
-  - Can only be triggered once until conquered.
+  - Unlockable before your first victory against the AI via secret keystrokes.
+  - Once defeated, the AI's hardcore mode is permanently conquered and champion status is memorialized.
 - **Clean Execution**:
   - Entering or skipping to the website cleanly stops the Three.js render loop (`cancelAnimationFrame`) and mutes audio so background resources are never wasted.
 
