@@ -14,7 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="css/style.css?v=3.5">
+  <link rel="stylesheet" href="css/style.css?v=4.0">
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥊</text></svg>">
@@ -33,10 +33,10 @@
       🔥 RAGED BOSS MODE ACTIVATED 🔥
     </div>
 
-    <!-- Top HUD: Health Bars & Cooldown Indicator -->
+    <!-- Top HUD: Health Bars, Super Gauges & Cooldown Indicator -->
     <div class="fight-top-hud">
       <!-- Player Card: YOU -->
-      <div class="fighter-hud-card">
+      <div class="fighter-hud-card player-hud">
         <div class="fighter-name-tag">
           <span class="fighter-tag-dot blue">●</span>
           <span class="fighter-label">YOU</span>
@@ -45,6 +45,13 @@
         <div class="hp-bar-track">
           <div id="playerHpLag" class="hp-bar-lag" style="width: 100%;"></div>
           <div id="playerHpFill" class="hp-bar-fill" style="width: 100%;"></div>
+        </div>
+        <!-- Super Meter -->
+        <div class="sp-bar-wrap">
+          <div class="sp-bar-track">
+            <div id="playerSpFill" class="sp-bar-fill" style="width: 0%;"></div>
+          </div>
+          <span id="playerSpLabel" class="sp-label">SUPER 0%</span>
         </div>
         <div class="hud-cd-wrap">
           <div class="cd-track">
@@ -57,8 +64,8 @@
       <!-- VS Badge -->
       <div id="fightVsBadge" class="vs-badge">VS</div>
 
-      <!-- AI Opponent: Aaditya Raj (HP is placed AFTER the name!) -->
-      <div class="fighter-hud-card enemy">
+      <!-- AI Opponent: Aaditya Raj -->
+      <div class="fighter-hud-card enemy-hud">
         <div class="fighter-name-tag">
           <span class="fighter-tag-dot orange">●</span>
           <span id="enemyNameLabel" class="fighter-label">Aaditya Raj (AI)</span>
@@ -68,8 +75,31 @@
           <div id="enemyHpLag" class="hp-bar-lag enemy" style="width: 100%;"></div>
           <div id="enemyHpFill" class="hp-bar-fill enemy-hp" style="width: 100%;"></div>
         </div>
+        <!-- AI Super Meter -->
+        <div class="sp-bar-wrap enemy-sp">
+          <div class="sp-bar-track enemy-track">
+            <div id="enemySpFill" class="sp-bar-fill enemy-fill" style="width: 0%;"></div>
+          </div>
+          <span id="enemySpLabel" class="sp-label">SUPER 0%</span>
+        </div>
       </div>
     </div>
+
+    <!-- Arcade Floating Combo Counter -->
+    <div id="arcadeComboToast" class="arcade-combo-toast hidden" aria-live="polite">
+      <div id="comboNum" class="combo-num">2</div>
+      <div class="combo-text-group">
+        <span class="combo-title">HITS!</span>
+        <span id="comboRating" class="combo-rating">COMBO!</span>
+      </div>
+    </div>
+
+    <!-- Desktop Super Move Button (Pulsing Fire when Ready) -->
+    <button id="btnSuperMove" class="btn-super-move hidden" aria-label="Unleash Dragon Super Combo">
+      <span class="super-fire-icon">🔥</span>
+      <span class="super-btn-txt">SUPER COMBO</span>
+      <span class="super-btn-key">[Q]</span>
+    </button>
 
     <!-- Start Overlay (Minimal, Docked at Bottom) -->
     <div id="fightStartOverlay" class="fight-screen-overlay bottom-docked">
@@ -91,6 +121,8 @@
           <span><kbd>E / K</kbd> Kick</span>
           <span class="sep">·</span>
           <span><kbd>Right-Click</kbd> Block</span>
+          <span class="sep">·</span>
+          <span><kbd>Q</kbd> Super Combo</span>
         </div>
       </div>
     </div>
@@ -135,6 +167,7 @@
         <span><strong class="key-tag">Left Click</strong> Punch</span>
         <span><strong class="key-tag">E / K</strong> Kick</span>
         <span><strong class="key-tag">Right Click</strong> Block</span>
+        <span><strong class="key-tag">Q</strong> Super Combo</span>
       </div>
       <button id="btnSkipFight" class="btn-skip-fight desktop-skip">Skip to Website →</button>
       <button id="btnSkipFightMobile" class="btn-skip-fight mobile-skip">Skip →</button>
@@ -164,6 +197,10 @@
           <button id="btnMobileBlock" class="touch-btn touch-block-btn" aria-label="Block">
             <span class="btn-icon">🛡</span>
             <span class="btn-lbl">BLOCK</span>
+          </button>
+          <button id="btnMobileSuper" class="touch-btn touch-super-btn hidden" aria-label="Super Combo">
+            <span class="btn-icon">🔥</span>
+            <span class="btn-lbl">SUPER</span>
           </button>
         </div>
         <div class="action-bottom-row">
@@ -316,8 +353,7 @@
           <div class="flip-card">
             <div class="flip-card-inner">
               <div class="flip-card-front">
-                <img src="https://img.itch.zone/aW1nLzI4NzQyODE0LmpwZWc=/315x250%23c/488o6b.jpeg" alt="Nightmare - A fairy tale banner" loading="lazy">
-                <span class="flip-badge-hint"><span class="hint-desktop">Hover to Flip</span><span class="hint-touch">Tap to Flip 🔄</span></span>
+                <img src="assets/images/projects/nightmare.png" alt="Nightmare - A fairy tale banner" loading="lazy">
               </div>
               <div class="flip-card-back">
                 <h4>Geek-N-Jam Winner</h4>
@@ -358,8 +394,7 @@
           <div class="flip-card">
             <div class="flip-card-inner">
               <div class="flip-card-front">
-                <img src="https://img.itch.zone/aW1nLzI1NDA0OTIxLnBuZw==/315x250%23c/ZzIGKB.png" alt="Time Traveler banner" loading="lazy">
-                <span class="flip-badge-hint"><span class="hint-desktop">Hover to Flip</span><span class="hint-touch">Tap to Flip 🔄</span></span>
+                <img src="assets/images/projects/time-traveler.png" alt="Time Traveler banner" loading="lazy">
               </div>
               <div class="flip-card-back">
                 <h4>Hackathon Winner</h4>
@@ -400,8 +435,7 @@
           <div class="flip-card">
             <div class="flip-card-inner">
               <div class="flip-card-front">
-                <img src="https://img.itch.zone/aW1nLzI0ODI3NzgyLmpwZWc=/315x250%23c/aNL%2FZM.jpeg" alt="ILLegal Moves banner" loading="lazy">
-                <span class="flip-badge-hint"><span class="hint-desktop">Hover to Flip</span><span class="hint-touch">Tap to Flip 🔄</span></span>
+                <img src="assets/images/projects/illegal-moves.png" alt="ILLegal Moves banner" loading="lazy">
               </div>
               <div class="flip-card-back">
                 <h4>StarCade Game Jam</h4>
@@ -441,8 +475,7 @@
           <div class="flip-card">
             <div class="flip-card-inner">
               <div class="flip-card-front">
-                <img src="https://img.itch.zone/aW1nLzMwMTg2ODI4LmdpZg==/315x250%23c/V02WAX.gif" alt="DriftIT banner" loading="lazy">
-                <span class="flip-badge-hint"><span class="hint-desktop">Hover to Flip</span><span class="hint-touch">Tap to Flip 🔄</span></span>
+                <img src="assets/images/projects/driftit.png" alt="DriftIT banner" loading="lazy">
               </div>
               <div class="flip-card-back">
                 <h4>2-Player Racing</h4>
@@ -483,8 +516,7 @@
           <div class="flip-card">
             <div class="flip-card-inner">
               <div class="flip-card-front">
-                <img src="https://img.itch.zone/aW1nLzI1NzM2NDY2LnBuZw==/315x250%23c/679iCV.png" alt="Strange Rooms banner" loading="lazy">
-                <span class="flip-badge-hint"><span class="hint-desktop">Hover to Flip</span><span class="hint-touch">Tap to Flip 🔄</span></span>
+                <img src="assets/images/projects/strange-rooms.png" alt="Strange Rooms banner" loading="lazy">
               </div>
               <div class="flip-card-back">
                 <h4>Brackeys Jam Entry</h4>
@@ -524,12 +556,8 @@
         <div class="project-row">
           <div class="flip-card">
             <div class="flip-card-inner">
-              <div class="flip-card-front" style="background: #181E28;">
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #94A3B8;">
-                  <span style="font-size: 2.5rem; margin-bottom: 0.35rem;">🚂</span>
-                  <span style="font-family: var(--font-code); font-size: 0.85rem; color: #F59E0B;">The Last Train</span>
-                </div>
-                <span class="flip-badge-hint"><span class="hint-desktop">Hover to Flip</span><span class="hint-touch">Tap to Flip 🔄</span></span>
+              <div class="flip-card-front">
+                <img src="assets/images/projects/the-last-train.png" alt="The Last Train banner" loading="lazy">
               </div>
               <div class="flip-card-back">
                 <h4>Atmospheric Narrative</h4>
@@ -567,12 +595,8 @@
         <div class="project-row">
           <div class="flip-card">
             <div class="flip-card-inner">
-              <div class="flip-card-front" style="background: #1A2436;">
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #94A3B8;">
-                  <span style="font-size: 2.5rem; margin-bottom: 0.35rem;">🐉</span>
-                  <span style="font-family: var(--font-code); font-size: 0.85rem; color: #38BDF8;">Dragons Quest</span>
-                </div>
-                <span class="flip-badge-hint"><span class="hint-desktop">Hover to Flip</span><span class="hint-touch">Tap to Flip 🔄</span></span>
+              <div class="flip-card-front">
+                <img src="assets/images/projects/dragons-quest.png" alt="Dragons Quest banner" loading="lazy">
               </div>
               <div class="flip-card-back">
                 <h4>2D Action Milestone</h4>
@@ -737,7 +761,7 @@
   </script>
 
   <!-- Scripts -->
-  <script src="js/game.js?v=3.5"></script>
-  <script src="js/main.js?v=3.5"></script>
+  <script src="js/game.js?v=4.0"></script>
+  <script src="js/main.js?v=4.0"></script>
 </body>
 </html>

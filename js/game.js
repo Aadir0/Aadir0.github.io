@@ -742,6 +742,19 @@ class ArenaFightingGame {
     this.aiTimer = 0;
     this.aiNextAction = 0.5;
 
+    // Super Move Meter state (0 - 100%)
+    this.playerSp = 0;
+    this.enemySp = 0;
+    this.maxSp = 100;
+
+    // Arcade Combo Counter & Hit Rating Toast
+    this.comboCount = 0;
+    this.lastComboTime = 0;
+    this.comboToastTimeout = null;
+
+    // Hitstop freeze frame timer (seconds)
+    this.hitstopTimer = 0;
+
     // Low-poly props exported from Blender (assets/lowpoly_models.json)
     this.loadBlenderProps();
 
@@ -802,13 +815,17 @@ class ArenaFightingGame {
     const ambient = new THREE.AmbientLight(0xffffff, 0.65);
     this.scene.add(ambient);
 
-    const spotBlue = new THREE.SpotLight(0x0284C7, 3.5, 45, Math.PI / 4, 0.35);
+    const spotBlue = new THREE.SpotLight(0x0284C7, 3.8, 50, Math.PI / 4, 0.35);
     spotBlue.position.set(-6, 12, 5);
     this.scene.add(spotBlue);
+    this.scene.add(spotBlue.target);
+    this.spotBlue = spotBlue;
 
-    const spotGold = new THREE.SpotLight(0xF59E0B, 3.5, 45, Math.PI / 4, 0.35);
+    const spotGold = new THREE.SpotLight(0xF59E0B, 3.8, 50, Math.PI / 4, 0.35);
     spotGold.position.set(6, 12, 5);
     this.scene.add(spotGold);
+    this.scene.add(spotGold.target);
+    this.spotGold = spotGold;
 
     const ringCenterLight = new THREE.PointLight(0xFFFFFF, 2.0, 30);
     ringCenterLight.position.set(0, 8, 0);
@@ -1209,6 +1226,10 @@ class ArenaFightingGame {
       if (e.key === 'e' || e.key === 'E' || e.key === 'k' || e.key === 'K') {
         this.triggerPlayerKick();
       }
+      // Super Move: Q
+      if (e.key === 'q' || e.key === 'Q') {
+        this.triggerSuperMove();
+      }
       // Punch via keyboard: F or J
       if (e.key === 'f' || e.key === 'F' || e.key === 'j' || e.key === 'J') {
         this.triggerPlayerPunch();
@@ -1263,6 +1284,19 @@ class ArenaFightingGame {
       }, 
       () => { if (this.player) this.player.isBlocking = false; }
     );
+
+    this.bindTouchButton('btnMobileSuper',
+      () => { this.triggerSuperMove(); },
+      () => {}
+    );
+
+    const btnSuperDesktop = document.getElementById('btnSuperMove');
+    if (btnSuperDesktop) {
+      btnSuperDesktop.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.triggerSuperMove();
+      });
+    }
 
     // Continuous Slide D-Pad Rocker (smooth thumb sliding without dead stops)
     const dpadZone = document.getElementById('mobileDpadZone');
@@ -1535,10 +1569,32 @@ class ArenaFightingGame {
         }
       }
 
+      // Hitstop freeze frame: solid impacts momentarily freeze time for visceral impact
+      this.hitstopTimer = isKick ? 0.065 : 0.045;
+
       const wasBlocked = defender.isBlocking;
       defender.takeDamage(damage, damage > 18);
       this.spawnSparks(defender.x, defender.y + 1.4);
       this.showDamageText(wasBlocked ? `BLOCKED!` : `${label} -${damage}`, defender.x);
+
+      // Super Gauge & Arcade Combo Tracker
+      if (attacker === this.player) {
+        this.playerSp = Math.min(100, this.playerSp + (isKick ? 22 : 14));
+        const now = performance.now();
+        if (now - this.lastComboTime < 1800) {
+          this.comboCount++;
+        } else {
+          this.comboCount = 1;
+        }
+        this.lastComboTime = now;
+        this.showComboToast(this.comboCount);
+      } else if (attacker === this.enemy) {
+        this.enemySp = Math.min(100, this.enemySp + (isKick ? 18 : 12));
+        // Reset player combo counter on taking damage
+        this.comboCount = 0;
+        this.hideComboToast();
+      }
+
       this.updateHUD();
 
       this.shakeCamera(damage > 18 || defender.isDead);
@@ -1551,6 +1607,109 @@ class ArenaFightingGame {
         }
       }
     }
+  }
+
+  showComboToast(count) {
+    if (count < 2) return;
+    const toast = document.getElementById('arcadeComboToast');
+    const numEl = document.getElementById('comboNum');
+    const ratingEl = document.getElementById('comboRating');
+    if (!toast || !numEl || !ratingEl) return;
+
+    numEl.textContent = count;
+    let rating = 'NICE! ✨';
+    if (count >= 6) rating = 'UNSTOPPABLE! 🔥';
+    else if (count >= 4) rating = 'SAVAGE! ⚡';
+    else if (count >= 3) rating = 'GREAT! 🥊';
+    ratingEl.textContent = rating;
+
+    toast.classList.remove('hidden');
+    toast.classList.remove('pop');
+    void toast.offsetWidth; // Force CSS reflow for pop animation
+    toast.classList.add('pop');
+
+    if (this.comboToastTimeout) clearTimeout(this.comboToastTimeout);
+    this.comboToastTimeout = setTimeout(() => {
+      this.hideComboToast();
+    }, 1800);
+  }
+
+  hideComboToast() {
+    const toast = document.getElementById('arcadeComboToast');
+    if (toast) {
+      toast.classList.add('hidden');
+      toast.classList.remove('pop');
+    }
+  }
+
+  triggerSuperMove() {
+    if (!this.player || this.player.isDead || !this.isPlaying) return;
+    if (this.playerSp < 100) {
+      this.showDamageText('SP NOT READY!', this.player.x);
+      return;
+    }
+
+    // Consume full SP meter
+    this.playerSp = 0;
+    this.updateHUD();
+
+    // Sound FX, arena roar & screen shake
+    audioFX.playHardcoreRoar();
+    audioFX.playWhoosh();
+    this.shakeCamera(true);
+
+    // Auto-face & dash close to enemy
+    if (this.enemy) {
+      this.player.facing = this.enemy.x > this.player.x ? 1 : -1;
+      this.player.root.rotation.y = this.player.facing === 1 ? Math.PI / 2 : -Math.PI / 2;
+      this.player.x = this.enemy.x + (this.player.facing === 1 ? -1.25 : 1.25);
+      this.player.vx = 0;
+    }
+
+    // Hit 1: Dragon Jab
+    this.player.punch();
+    audioFX.playImpact(true);
+    this.spawnSparks(this.enemy.x, 1.8);
+    this.enemy.takeDamage(12, true);
+    this.showDamageText('DRAGON BLITZ! -12', this.enemy.x);
+    this.hitstopTimer = 0.06;
+
+    // Hit 2: Flame Cross at 130ms
+    setTimeout(() => {
+      if (!this.isPlaying || !this.enemy || this.enemy.isDead) return;
+      this.player.punch();
+      audioFX.playImpact(true);
+      this.spawnSparks(this.enemy.x, 1.6);
+      this.enemy.takeDamage(14, true);
+      this.showDamageText('FLAME CROSS! -14', this.enemy.x);
+      this.shakeCamera(true);
+      this.hitstopTimer = 0.06;
+    }, 130);
+
+    // Hit 3: Skyward Finish Kick at 280ms
+    setTimeout(() => {
+      if (!this.isPlaying || !this.enemy) return;
+      this.player.kick();
+      audioFX.playImpact(true);
+      audioFX.playCrowdCheer();
+      this.spawnSparks(this.enemy.x, 1.4);
+      this.spawnConfetti(this.enemy.x, 2.5, 35);
+      this.enemy.takeDamage(18, true);
+      this.enemy.vy = 8.5; // Launches enemy up
+      this.enemy.isGrounded = false;
+      this.showDamageText('SUPER FINISHER! -18', this.enemy.x);
+      this.shakeCamera(true);
+      this.hitstopTimer = 0.08;
+
+      this.comboCount += 3;
+      this.lastComboTime = performance.now();
+      this.showComboToast(this.comboCount);
+      this.updateHUD();
+
+      if (this.enemy.isDead) {
+        this.triggerVictory();
+      }
+    }, 280);
   }
 
   shakeCamera(heavy = false) {
@@ -1739,6 +1898,14 @@ class ArenaFightingGame {
     this.keys.left = false;
     this.keys.right = false;
 
+    // Reset combat state meters
+    this.playerSp = 0;
+    this.enemySp = 0;
+    this.comboCount = 0;
+    this.lastComboTime = 0;
+    this.hitstopTimer = 0;
+    this.hideComboToast();
+
     this.setOverlay(null);
     this.updateHUD();
     audioFX.playBell();
@@ -1867,6 +2034,39 @@ class ArenaFightingGame {
         punchBtn.classList.toggle('punch-ready', cdPercent >= 98);
       }
     }
+
+    // SP Gauges & Super Buttons
+    const playerSpBar = document.getElementById('playerSpFill');
+    const enemySpBar = document.getElementById('enemySpFill');
+    const playerSpText = document.getElementById('playerSpLabel');
+    const enemySpText = document.getElementById('enemySpLabel');
+    const btnSuperDesktop = document.getElementById('btnSuperMove');
+    const btnSuperMobile = document.getElementById('btnMobileSuper');
+
+    const pSp = Math.max(0, Math.min(100, Math.floor(this.playerSp)));
+    const eSp = Math.max(0, Math.min(100, Math.floor(this.enemySp)));
+
+    if (playerSpBar) {
+      playerSpBar.style.width = `${pSp}%`;
+      playerSpBar.classList.toggle('sp-ready', pSp >= 100);
+    }
+    if (enemySpBar) {
+      enemySpBar.style.width = `${eSp}%`;
+      enemySpBar.classList.toggle('sp-ready', eSp >= 100);
+    }
+    if (playerSpText) {
+      playerSpText.textContent = pSp >= 100 ? 'MAX!' : `${pSp}%`;
+    }
+    if (enemySpText) {
+      enemySpText.textContent = eSp >= 100 ? 'MAX!' : `${eSp}%`;
+    }
+
+    if (btnSuperDesktop) {
+      btnSuperDesktop.classList.toggle('sp-ready', pSp >= 100);
+    }
+    if (btnSuperMobile) {
+      btnSuperMobile.classList.toggle('sp-ready', pSp >= 100);
+    }
   }
 
   destroy() {
@@ -1908,7 +2108,22 @@ class ArenaFightingGame {
     this.animFrameId = requestAnimationFrame(this.animate);
     const dt = Math.min(this.clock.getDelta(), 0.1);
 
+    // Hitstop freeze frame: momentary time pause on solid hit gives impactful visceral feedback
+    if (this.hitstopTimer > 0) {
+      this.hitstopTimer = Math.max(0, this.hitstopTimer - dt);
+      this.renderer.render(this.scene, this.camera);
+      return;
+    }
+
     this.updateScenery(dt);
+
+    // Dynamic arena spotlights smoothly track fighters
+    if (this.spotBlue && this.player) {
+      this.spotBlue.target.position.set(this.player.x, 1.2, 0);
+    }
+    if (this.spotGold && this.enemy) {
+      this.spotGold.target.position.set(this.enemy.x, 1.2, 0);
+    }
 
     if (this.isPlaying) {
       this.updateHUD();
@@ -1990,6 +2205,23 @@ class ArenaFightingGame {
     if (this.aiTimer > this.aiNextAction) {
       this.aiTimer = 0;
       this.aiNextAction = cfg.aiActGap + Math.random() * cfg.aiActVariance;
+
+      // AI Super Attack when SP is full
+      if (this.enemySp >= 100 && dist < 2.5 && !this.player.isDead) {
+        this.enemySp = 0;
+        this.updateHUD();
+        audioFX.playHardcoreRoar();
+        this.shakeCamera(true);
+        this.showDamageText(this.isHardcore ? 'BOSS FLAME STRIKE!' : 'AI SUPER COMBO!', this.enemy.x);
+        this.enemy.punch();
+        this.checkHit(this.enemy, this.player, 16, this.isHardcore ? 'DRAGON CRUSH!' : 'SUPER PUNCH!', false);
+        setTimeout(() => {
+          if (!this.isPlaying || !this.player || this.enemy.isDead) return;
+          this.enemy.kick();
+          this.checkHit(this.enemy, this.player, 18, 'CYCLONE KICK!', true);
+        }, 180);
+        return;
+      }
 
       // AI Kick Decision: kicks have longer reach
       if (dist < 2.3 && this.enemy.kickCooldown <= 0) {

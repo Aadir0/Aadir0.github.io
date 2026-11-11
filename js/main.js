@@ -155,6 +155,10 @@ function initBoxingEntrance() {
       case 'btnRetryFight':
         window.fightGame.startFight();
         break;
+      case 'btnSuperMove':
+      case 'btnMobileSuper':
+        window.fightGame.triggerSuperMove();
+        break;
       case 'btnEnterFromFight':
         terminateAndEnter();
         break;
