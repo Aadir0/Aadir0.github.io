@@ -1,25 +1,26 @@
 /* ==========================================================================
    Aaditya Raj - Indie Game Developer Portfolio
-   Inspired by tsitski.com: warm craft paper, tactile cards, clean typography
+   Clean, Warm, Human Craft (Lighter espresso linen, smooth typography)
    ========================================================================== */
 
 :root {
-  /* tsitski authentic craft palette */
-  --color-paper: #211a15;       /* Warm dark paper background */
-  --color-cream: #3a2c22;       /* Subtle cream container */
-  --color-card: #2b211a;        /* Tactile card surface */
-  --color-line: #4b3a2c;        /* Hand-crafted card border */
-  --color-ink: #f2e7d4;         /* Ivory / parchment readable text */
-  --color-muted: #b39f86;       /* Warm muted captions */
-  --color-clay: #e08a5f;        /* Terracotta / clay accent */
-  --color-sage: #9aac84;        /* Soft sage badge */
-  --color-honey: #e6b365;       /* Warm golden amber */
+  /* Warm, welcoming, lighter palette (not too dark!) */
+  --color-paper: #2d251f;       /* Warm roasted linen background */
+  --color-cream: #392f27;       /* Soft elevated container */
+  --color-card: #382e26;        /* Clean tactile card surface */
+  --color-card-hover: #44372e;  /* Interactive hover */
+  --color-line: #524338;        /* Soft warm border (no jagged edge) */
+  --color-ink: #faf5ee;         /* Crisp, bright ivory text */
+  --color-muted: #c7b8a7;       /* Readable warm body text */
+  --color-clay: #f0956b;        /* Warm terracotta peach accent */
+  --color-sage: #a8be93;        /* Gentle sage badge */
+  --color-honey: #f3c27b;       /* Golden amber */
 
-  --font-display: 'Fraunces', Georgia, "Times New Roman", serif;
-  --font-body: 'Nunito', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-body: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-code: 'JetBrains Mono', Consolas, monospace;
 
-  /* Aliases for game HUD compatibility */
+  /* Game HUD fallback mappings */
   --bg-main: var(--color-paper);
   --bg-subtle: var(--color-card);
   --bg-white: var(--color-cream);
@@ -42,6 +43,8 @@ html {
   scroll-behavior: smooth;
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   background-color: var(--color-paper);
   color-scheme: dark;
 }
@@ -50,23 +53,23 @@ body {
   background-color: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-body);
-  line-height: 1.6;
+  line-height: 1.65;
   min-height: 100vh;
   overflow-x: hidden;
   position: relative;
 }
 
-/* Ambient Cursor Glow Torch (tsitski-inspired) */
+/* Ambient Cursor Glow Torch */
 .cursor-glow-light {
   position: fixed;
   top: 0;
   left: 0;
-  width: 500px;
-  height: 500px;
-  margin-top: -250px;
-  margin-left: -250px;
+  width: 520px;
+  height: 520px;
+  margin-top: -260px;
+  margin-left: -260px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(224, 138, 95, 0.12) 0%, rgba(230, 179, 101, 0.04) 40%, transparent 70%);
+  background: radial-gradient(circle, rgba(240, 149, 107, 0.12) 0%, rgba(243, 194, 123, 0.04) 45%, transparent 70%);
   pointer-events: none;
   z-index: 1;
   will-change: transform;
@@ -96,51 +99,51 @@ body {
 
 .ts-container {
   width: 100%;
-  max-width: 740px;
+  max-width: 760px;
   margin: 0 auto;
   padding: 0 1.5rem;
 }
 
 /* ==========================================================================
-   tsitski Minimal Header
+   Header (Clean & Minimal: home / projects / blog)
    ========================================================================== */
 .ts-header {
   position: sticky;
   top: 0;
   width: 100%;
-  background: rgba(33, 26, 21, 0.92);
+  background: rgba(45, 37, 31, 0.94);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--color-line);
   z-index: 100;
-  padding: 0.85rem 0;
+  padding: 1rem 0;
 }
 
 .ts-header-inner {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  justify-content: center;
 }
 
 .ts-nav {
   display: flex;
   align-items: center;
-  gap: 1.6rem;
+  gap: 2rem;
 }
 
 .ts-nav-link {
   background: transparent;
   border: none;
   color: var(--color-muted);
-  font-family: var(--font-body);
-  font-size: 1.05rem;
+  font-family: var(--font-heading);
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
-  padding: 0.2rem 0;
+  padding: 0.25rem 0.4rem;
   position: relative;
   transition: color 0.2s ease;
   text-decoration: none;
+  letter-spacing: 0.02em;
 }
 
 .ts-nav-link:hover {
@@ -152,18 +155,18 @@ body {
   border-bottom: 2px solid var(--color-clay);
 }
 
-/* Small "Refresh your mood" button */
+/* Small "Refresh your mood" button in projects */
 .ts-mood-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  padding: 0.45rem 1rem;
+  padding: 0.45rem 1.1rem;
   border-radius: 999px;
   background: var(--color-card);
   border: 1px solid var(--color-line);
   box-shadow: 0 2px 0 0 var(--color-line);
   color: var(--color-ink);
-  font-family: var(--font-body);
+  font-family: var(--font-heading);
   font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
@@ -176,9 +179,9 @@ body {
 
 .ts-mood-btn:hover {
   transform: translateY(-2px);
-  border-color: rgba(224, 138, 95, 0.6);
+  border-color: rgba(240, 149, 107, 0.6);
   color: var(--color-clay);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
 }
 
 /* ==========================================================================
@@ -195,18 +198,19 @@ body {
 .ts-panel {
   display: none;
   opacity: 0;
+  outline: none;
 }
 
 .ts-panel.active {
   display: block;
   opacity: 1;
-  animation: tsPanelFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: tsPanelFade 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes tsPanelFade {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -215,7 +219,7 @@ body {
 }
 
 /* ==========================================================================
-   1. About Section (Authentic tsitski feel)
+   1. About Section (Clean & Smooth, No Dotted Lines, No Jaggedness)
    ========================================================================== */
 .ts-hero {
   display: flex;
@@ -226,10 +230,10 @@ body {
 }
 
 .ts-hero-title {
-  font-family: var(--font-display);
-  font-size: clamp(2.4rem, 6vw, 3.6rem);
-  font-weight: 600;
-  letter-spacing: -0.025em;
+  font-family: var(--font-heading);
+  font-size: clamp(2.4rem, 6vw, 3.8rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
   color: var(--color-ink);
   margin-bottom: 1.1rem;
   display: inline-flex;
@@ -237,20 +241,18 @@ body {
   justify-content: center;
   flex-wrap: wrap;
   gap: 0.35em;
+  line-height: 1.15;
 }
 
-/* The Cursor-Hover Name Swap Effect: Tomas -> tsitski / Aaditya -> cholebhature */
+/* The Seamless Name Swap Effect: Aaditya -> cholebhature (NO dotted line, NO cutoff!) */
 .name-swap {
-  --nx: -999px;
-  --ny: -999px;
-  --nr: 2.3em;
-  vertical-align: bottom;
-  justify-items: start;
   display: inline-grid;
-  cursor: pointer;
+  vertical-align: baseline;
   position: relative;
-  border-bottom: 2px dashed rgba(224, 138, 95, 0.45);
-  padding-bottom: 2px;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  margin: 0;
 }
 
 .name-from,
@@ -258,34 +260,43 @@ body {
   white-space: nowrap;
   grid-area: 1/1;
   user-select: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
 .name-from {
   color: var(--color-ink);
-  mask-image: radial-gradient(circle var(--nr) at var(--nx) var(--ny), transparent 99%, #000 100%);
-  -webkit-mask-image: radial-gradient(circle var(--nr) at var(--nx) var(--ny), transparent 99%, #000 100%);
+  opacity: 1;
 }
 
 .name-to {
   color: var(--color-clay);
   font-style: italic;
-  mask-image: radial-gradient(circle var(--nr) at var(--nx) var(--ny), #000 99%, transparent 100%);
-  -webkit-mask-image: radial-gradient(circle var(--nr) at var(--nx) var(--ny), #000 99%, transparent 100%);
+  font-weight: 800;
+  opacity: 0;
+  transform: translateY(2px);
+  pointer-events: none;
 }
 
-.name-swap:hover,
-.name-swap.swapped {
-  --nx: 50%;
-  --ny: 50%;
-  --nr: 8em;
+/* Clean hover & active swap */
+.name-swap:hover .name-from,
+.name-swap.swapped .name-from {
+  opacity: 0;
+  transform: translateY(-2px);
+}
+
+.name-swap:hover .name-to,
+.name-swap.swapped .name-to {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 .ts-hero-bio {
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   line-height: 1.6;
   color: var(--color-muted);
   max-width: 580px;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
 }
 
 .ts-hero-sub {
@@ -293,7 +304,7 @@ body {
   line-height: 1.6;
   color: var(--color-muted);
   max-width: 580px;
-  margin-bottom: 2.25rem;
+  margin-bottom: 2rem;
 }
 
 .ts-highlight {
@@ -301,24 +312,22 @@ body {
   font-weight: 700;
 }
 
-/* Quick Simple Cards (tsitski dr component) */
+/* Clean Work Link Card */
 .ts-quick-row {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
-  gap: 1rem;
 }
 
 .ts-simple-card {
   display: inline-flex;
   align-items: center;
   gap: 0.9rem;
-  width: 270px;
+  width: 290px;
   background: var(--color-card);
   border: 1px solid var(--color-line);
   box-shadow: 0 2px 0 0 var(--color-line);
   border-radius: 16px;
-  padding: 0.9rem 1.15rem;
+  padding: 0.95rem 1.25rem;
   text-align: left;
   cursor: pointer;
   color: inherit;
@@ -329,8 +338,8 @@ body {
 
 .ts-simple-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(224, 138, 95, 0.5);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  border-color: rgba(240, 149, 107, 0.5);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
 }
 
 .ts-card-icon {
@@ -352,9 +361,9 @@ body {
 }
 
 .ts-card-name {
-  font-family: var(--font-display);
-  font-size: 1rem;
-  font-weight: 600;
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
   color: var(--color-ink);
 }
 
@@ -364,7 +373,7 @@ body {
 
 .ts-card-arrow {
   color: var(--color-muted);
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   transition: transform 0.2s ease, color 0.2s ease;
 }
 
@@ -383,18 +392,20 @@ body {
 }
 
 .ts-subheading {
-  font-family: var(--font-display);
+  font-family: var(--font-heading);
   font-size: 1.45rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-ink);
+  letter-spacing: -0.01em;
   margin-bottom: 1.25rem;
 }
 
 .ts-simple-list {
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
-  max-width: 580px;
+  gap: 0.9rem;
+  max-width: 600px;
+  width: 100%;
   text-align: left;
   background: var(--color-card);
   border: 1px solid var(--color-line);
@@ -407,7 +418,7 @@ body {
   display: flex;
   align-items: baseline;
   gap: 0.75rem;
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   color: var(--color-ink);
   line-height: 1.5;
 }
@@ -418,7 +429,7 @@ body {
   flex-shrink: 0;
 }
 
-/* Circular Social Icons (tsitski where else to find me) */
+/* Circular Social Icons */
 .ts-social-row {
   display: flex;
   flex-wrap: wrap;
@@ -443,13 +454,13 @@ body {
 
 .ts-icon-btn:hover {
   transform: translateY(-2px);
-  border-color: rgba(224, 138, 95, 0.6);
+  border-color: rgba(240, 149, 107, 0.6);
   color: var(--color-clay);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
 }
 
 /* ==========================================================================
-   2. Projects View (Simple tactile cards like tsitski.com)
+   2. Projects View (Simple tactile cards)
    ========================================================================== */
 .ts-panel-top {
   display: flex;
@@ -463,11 +474,11 @@ body {
 }
 
 .ts-page-title {
-  font-family: var(--font-display);
+  font-family: var(--font-heading);
   font-size: 2.2rem;
-  font-weight: 600;
+  font-weight: 800;
   color: var(--color-ink);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
   margin-bottom: 0.35rem;
 }
 
@@ -496,7 +507,7 @@ body {
 
 .ts-game-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(224, 138, 95, 0.5);
+  border-color: rgba(240, 149, 107, 0.5);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
 }
 
@@ -505,7 +516,7 @@ body {
   aspect-ratio: 16/9;
   border-radius: 12px;
   overflow: hidden;
-  background: #18120e;
+  background: #231c17;
   flex-shrink: 0;
 }
 
@@ -537,9 +548,9 @@ body {
 }
 
 .ts-game-title {
-  font-family: var(--font-display);
+  font-family: var(--font-heading);
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-ink);
 }
 
@@ -555,25 +566,25 @@ body {
 }
 
 .ts-tag.sage {
-  background: rgba(154, 172, 132, 0.15);
-  border-color: rgba(154, 172, 132, 0.4);
+  background: rgba(168, 190, 147, 0.15);
+  border-color: rgba(168, 190, 147, 0.4);
   color: var(--color-sage);
 }
 
 .ts-tag.honey {
-  background: rgba(230, 179, 101, 0.15);
-  border-color: rgba(230, 179, 101, 0.4);
+  background: rgba(243, 194, 123, 0.15);
+  border-color: rgba(243, 194, 123, 0.4);
   color: var(--color-honey);
 }
 
 .ts-tag.clay {
-  background: rgba(224, 138, 95, 0.15);
-  border-color: rgba(224, 138, 95, 0.4);
+  background: rgba(240, 149, 107, 0.15);
+  border-color: rgba(240, 149, 107, 0.4);
   color: var(--color-clay);
 }
 
 .ts-game-desc {
-  font-size: 0.92rem;
+  font-size: 0.94rem;
   color: var(--color-muted);
   line-height: 1.5;
   margin-bottom: 0.85rem;
@@ -591,10 +602,10 @@ body {
   gap: 0.35rem;
   padding: 0.35rem 0.85rem;
   border-radius: 8px;
-  background: rgba(224, 138, 95, 0.12);
-  border: 1px solid rgba(224, 138, 95, 0.35);
+  background: rgba(240, 149, 107, 0.12);
+  border: 1px solid rgba(240, 149, 107, 0.35);
   color: var(--color-clay);
-  font-family: var(--font-body);
+  font-family: var(--font-heading);
   font-size: 0.82rem;
   font-weight: 700;
   text-decoration: none;
@@ -618,157 +629,209 @@ body {
 }
 
 /* ==========================================================================
-   3. Contact View (Simple & Minimal)
+   3. Devlogs & Blog Section
    ========================================================================== */
-.ts-contact-wrap {
+.ts-blogs-list {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  max-width: 600px;
+  gap: 1.4rem;
 }
 
-.ts-email-card {
+.ts-blog-card {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
   background: var(--color-card);
   border: 1px solid var(--color-line);
   box-shadow: 0 2px 0 0 var(--color-line);
   border-radius: 16px;
-  padding: 1.25rem 1.5rem;
+  padding: 1.25rem;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.ts-email-label {
+.ts-blog-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(240, 149, 107, 0.5);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+
+.ts-blog-thumb {
+  width: 170px;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #231c17;
+  flex-shrink: 0;
+}
+
+.ts-blog-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   display: block;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--color-muted);
+  transition: transform 0.4s ease;
+}
+
+.ts-blog-card:hover .ts-blog-thumb img {
+  transform: scale(1.05);
+}
+
+.ts-blog-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.ts-blog-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   margin-bottom: 0.4rem;
 }
 
-.ts-email-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.ts-email-link {
+.ts-blog-date {
   font-family: var(--font-code);
-  font-size: 1.05rem;
+  font-size: 0.76rem;
+  color: var(--color-muted);
+}
+
+.ts-blog-title {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
   color: var(--color-ink);
-  text-decoration: none;
+  line-height: 1.3;
+  margin-bottom: 0.45rem;
 }
 
-.ts-email-link:hover {
-  color: var(--color-clay);
+.ts-blog-excerpt {
+  font-size: 0.94rem;
+  color: var(--color-muted);
+  line-height: 1.55;
+  margin-bottom: 0.85rem;
 }
 
-.ts-copy-btn {
+.ts-read-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  padding: 0.35rem 0.8rem;
+  padding: 0.35rem 0.85rem;
   border-radius: 8px;
-  background: rgba(224, 138, 95, 0.12);
-  border: 1px solid rgba(224, 138, 95, 0.35);
+  background: rgba(240, 149, 107, 0.12);
+  border: 1px solid rgba(240, 149, 107, 0.35);
   color: var(--color-clay);
-  font-family: var(--font-body);
+  font-family: var(--font-heading);
   font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.ts-copy-btn:hover {
+.ts-read-btn:hover {
   background: var(--color-clay);
   color: #211a15;
 }
 
-.ts-copy-btn.copied {
-  background: var(--color-sage);
-  border-color: var(--color-sage);
+/* ==========================================================================
+   Devlog Modal Reader
+   ========================================================================== */
+.ts-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 20, 16, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 10000;
+}
+
+.ts-modal-overlay.hidden {
+  display: none;
+}
+
+.ts-modal-card {
+  position: relative;
+  background: var(--color-paper);
+  border: 1px solid var(--color-line);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 680px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 2.5rem;
+}
+
+.ts-modal-close {
+  position: sticky;
+  top: 0;
+  float: right;
+  background: var(--color-card);
+  border: 1px solid var(--color-line);
+  color: var(--color-ink);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.ts-modal-close:hover {
+  background: var(--color-clay);
   color: #211a15;
 }
 
-.ts-form-card {
-  background: var(--color-card);
-  border: 1px solid var(--color-line);
-  box-shadow: 0 2px 0 0 var(--color-line);
-  border-radius: 16px;
-  padding: 1.75rem;
+.ts-modal-body h2 {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--color-ink);
+  line-height: 1.25;
+  margin-bottom: 0.75rem;
 }
 
-.ts-field {
+.ts-modal-body .modal-meta {
+  font-family: var(--font-code);
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  margin-bottom: 1.5rem;
+  display: block;
+}
+
+.ts-modal-body img {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--color-line);
+}
+
+.ts-modal-body p {
+  font-size: 1.05rem;
+  color: var(--color-ink);
+  line-height: 1.7;
   margin-bottom: 1.25rem;
 }
 
-.ts-field label {
-  display: block;
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--color-muted);
-  margin-bottom: 0.35rem;
+.ts-modal-body strong {
+  color: #ffffff;
 }
 
-.ts-field input,
-.ts-field textarea {
-  width: 100%;
-  padding: 0.8rem 1rem;
-  background: var(--color-paper);
+.ts-modal-body code {
+  background: var(--color-card);
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
   border: 1px solid var(--color-line);
-  border-radius: 10px;
-  color: var(--color-ink);
-  font-family: inherit;
-  font-size: 0.95rem;
-  transition: border-color 0.2s ease;
-}
-
-.ts-field input:focus,
-.ts-field textarea:focus {
-  outline: none;
-  border-color: var(--color-clay);
-}
-
-.ts-field textarea {
-  min-height: 120px;
-  resize: vertical;
-}
-
-.ts-submit-btn {
-  width: 100%;
-  padding: 0.9rem;
-  background: var(--color-clay);
-  color: #211a15;
-  font-family: var(--font-body);
-  font-size: 0.95rem;
-  font-weight: 800;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.ts-submit-btn:hover {
-  background: var(--color-honey);
-  transform: translateY(-1px);
-}
-
-.form-status-msg {
-  margin-top: 1rem;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.form-status-msg.success {
-  background: rgba(154, 172, 132, 0.2);
-  border: 1px solid var(--color-sage);
-  color: var(--color-sage);
-}
-
-.form-status-msg.error {
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid #ef4444;
-  color: #f87171;
+  font-family: var(--font-code);
+  font-size: 0.85em;
+  color: var(--color-honey);
 }
 
 /* ==========================================================================
@@ -777,7 +840,7 @@ body {
 .ts-footer {
   padding: 2.5rem 0;
   border-top: 1px solid var(--color-line);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: var(--color-muted);
 }
 
@@ -796,15 +859,16 @@ body {
 .ts-footer-links {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.75rem;
 }
 
 .ts-footer-links button {
   background: transparent;
   border: none;
   color: var(--color-muted);
-  font-family: inherit;
+  font-family: var(--font-heading);
   font-size: inherit;
+  font-weight: 600;
   cursor: pointer;
   transition: color 0.2s ease;
 }
@@ -824,12 +888,12 @@ body {
   right: 18px;
   z-index: 1000;
   padding: 0.45rem 1rem;
-  background: rgba(33, 26, 21, 0.85);
+  background: rgba(45, 37, 31, 0.88);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 999px;
   color: var(--color-ink);
-  font-family: var(--font-body);
+  font-family: var(--font-heading);
   font-size: 0.84rem;
   font-weight: 700;
   cursor: pointer;
@@ -844,28 +908,19 @@ body {
 
 /* Responsive adjustments */
 @media (max-width: 640px) {
-  .ts-game-card {
+  .ts-game-card, .ts-blog-card {
     flex-direction: column;
     align-items: stretch;
   }
-  .ts-game-thumb {
+  .ts-game-thumb, .ts-blog-thumb {
     width: 100%;
     aspect-ratio: 16/9;
   }
-  .ts-header-inner {
-    flex-direction: column;
-    align-items: center;
-    gap: 0.6rem;
+  .ts-hero-title {
+    font-size: 2.2rem;
   }
-  .ts-nav {
-    gap: 1.25rem;
-  }
-  .ts-email-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .ts-copy-btn {
-    justify-content: center;
+  .ts-modal-card {
+    padding: 1.5rem;
   }
 }
 

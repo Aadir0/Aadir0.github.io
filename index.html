@@ -6,15 +6,15 @@
   <title>Aaditya Raj — Game Developer</title>
   <meta name="description" content="Hi, I'm Aaditya Raj (cholebhature). I make indie video games in Unity & C#.">
   <meta name="author" content="Aaditya Raj">
-  <meta name="theme-color" content="#211a15">
+  <meta name="theme-color" content="#2c241e">
 
-  <!-- Fonts: Fraunces (Editorial Indie Serif) & Nunito (Clean Friendly Body) -->
+  <!-- Fonts: Plus Jakarta Sans (Clean Modern Heading) & Nunito (Warm Body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="css/style.css?v=6.0">
+  <link rel="stylesheet" href="css/style.css?v=7.0">
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥊</text></svg>">
@@ -26,7 +26,7 @@
   <canvas id="glitterCanvas" class="glitter-canvas" aria-hidden="true"></canvas>
 
   <!-- ==========================================================================
-       3D Boxing Mini-Game (Only opened when clicking "Refresh your mood")
+       3D Boxing Mini-Game (Only opened from the Projects page)
        ========================================================================== -->
   <div id="fightScreenRoot" class="fighter-screen hidden" style="display: none;">
     <canvas id="fightCanvas"></canvas>
@@ -152,7 +152,7 @@
         <p id="winSubtitleText" class="fight-modal-desc">
           Nice fight! Mood refreshed.
         </p>
-        <button id="btnEnterFromFight" class="fight-btn-minimal win">Back to Portfolio →</button>
+        <button id="btnEnterFromFight" class="fight-btn-minimal win">Back to Website →</button>
       </div>
     </div>
 
@@ -208,7 +208,7 @@
   </div>
 
   <!-- ==========================================================================
-       Simple Minimal Header (tsitski style: home / projects / contact)
+       Simple Clean Header: home / projects / blog
        ========================================================================== -->
   <header class="ts-header">
     <div class="ts-container ts-header-inner">
@@ -219,21 +219,15 @@
         <button class="ts-nav-link" role="tab" aria-selected="false" data-tab-target="projects">
           projects
         </button>
-        <button class="ts-nav-link" role="tab" aria-selected="false" data-tab-target="contact">
-          contact
+        <button class="ts-nav-link" role="tab" aria-selected="false" data-tab-target="blog">
+          blog
         </button>
       </nav>
-
-      <!-- Small "Refresh your mood" button in header -->
-      <button class="ts-mood-btn" id="btnHeaderMood" title="Play 3D boxing mini-game">
-        <span class="glove-icon">🥊</span>
-        <span>Refresh your mood</span>
-      </button>
     </div>
   </header>
 
   <!-- ==========================================================================
-       Main Simple Content Stage (Minimal, Human, Elegant)
+       Main Content Stage (Clean, Warm, Not Too Dark)
        ========================================================================== -->
   <main class="ts-main ts-container">
 
@@ -243,7 +237,7 @@
     <section id="about" class="ts-panel active" role="tabpanel" tabindex="0">
       <div class="ts-hero">
         <h1 class="ts-hero-title">
-          hi, i'm <span class="name-swap" id="heroNameSwap" title="hover to reveal">
+          hi, i'm <span class="name-swap" id="heroNameSwap">
             <span class="name-from">Aaditya</span>
             <span class="name-to" aria-hidden="true">cholebhature</span>
           </span>
@@ -257,22 +251,13 @@
           Right now most of my time is spent crafting indie games in <span class="ts-highlight">Unity &amp; C#</span>.
         </p>
 
-        <!-- Minimal Quick Links (tsitski simple card style) -->
+        <!-- Clean Direct Work Link Card -->
         <div class="ts-quick-row">
           <button class="ts-simple-card" data-tab-target="projects">
             <span class="ts-card-icon">🎮</span>
             <span class="ts-card-text">
               <span class="ts-card-sub">my work</span>
               <span class="ts-card-name">the games I'm making</span>
-            </span>
-            <span class="ts-card-arrow">→</span>
-          </button>
-
-          <button class="ts-simple-card" id="btnHeroMood">
-            <span class="ts-card-icon">🥊</span>
-            <span class="ts-card-text">
-              <span class="ts-card-sub">take a break</span>
-              <span class="ts-card-name">Refresh your mood</span>
             </span>
             <span class="ts-card-arrow">→</span>
           </button>
@@ -298,7 +283,7 @@
         </div>
       </div>
 
-      <!-- Where to find me (circular icons like tsitski) -->
+      <!-- Where to find me (Clean circular icons) -->
       <div class="ts-section-block">
         <h2 class="ts-subheading">where to find me</h2>
         <div class="ts-social-row">
@@ -335,7 +320,7 @@
     </section>
 
     <!-- ========================================================================
-         2. Projects View (Simple Cards Just Like tsitski.com)
+         2. Projects View (Simple tactile cards like tsitski.com)
          ======================================================================== -->
     <section id="projects" class="ts-panel" role="tabpanel" tabindex="0">
       <div class="ts-panel-top">
@@ -344,14 +329,14 @@
           <p class="ts-page-desc">6 indie games built for game jams, hackathons, and fun.</p>
         </div>
 
-        <!-- Small button in the project section top menu to refresh mood -->
+        <!-- Refresh your mood button: ONLY in the projects page -->
         <button class="ts-mood-btn" id="btnProjectsMood">
           <span class="glove-icon">🥊</span>
           <span>Refresh your mood</span>
         </button>
       </div>
 
-      <!-- Simple tactile cards (tsitski inspired) -->
+      <!-- Simple tactile cards -->
       <div class="ts-games-list">
 
         <!-- 1. Nightmare - A fairy tale -->
@@ -499,52 +484,94 @@
     </section>
 
     <!-- ========================================================================
-         3. Contact View (Clean, Direct, Minimal)
+         3. Devlogs & Blog View (Devlogs with images, write-ups & learnings)
          ======================================================================== -->
-    <section id="contact" class="ts-panel" role="tabpanel" tabindex="0">
+    <section id="blog" class="ts-panel" role="tabpanel" tabindex="0">
       <div class="ts-panel-top">
         <div>
-          <h2 class="ts-page-title">say hello</h2>
-          <p class="ts-page-desc">Open to game jam teams, playtesting feedback, or indie collaborations.</p>
+          <h2 class="ts-page-title">devlogs &amp; thoughts</h2>
+          <p class="ts-page-desc">Notes on game feel, physics experiments, and building indie games.</p>
         </div>
       </div>
 
-      <div class="ts-contact-wrap">
-        <!-- Direct Email Pill with 1-Click Copy -->
-        <div class="ts-email-card">
-          <span class="ts-email-label">email me directly</span>
-          <div class="ts-email-row">
-            <a href="mailto:aadisingh3217@gmail.com" class="ts-email-link">aadisingh3217@gmail.com</a>
-            <button id="btnCopyEmail" class="ts-copy-btn" title="Copy to clipboard">
-              <span id="copyIcon">📋</span>
-              <span id="copyLabel">Copy</span>
-            </button>
-          </div>
-        </div>
+      <div class="ts-blogs-list">
 
-        <!-- Minimal Form -->
-        <div class="ts-form-card">
-          <form id="contactForm" action="https://formspree.io/f/mrpedoan" method="POST">
-            <div class="ts-field">
-              <label for="name">your name</label>
-              <input type="text" id="name" name="name" placeholder="Name" required>
+        <!-- Blog 1: The Last Train -->
+        <article class="ts-blog-card" data-blog-id="last-train">
+          <div class="ts-blog-thumb">
+            <img src="assets/images/projects/the-last-train.png" alt="The Last Train devlog banner" loading="lazy">
+          </div>
+          <div class="ts-blog-content">
+            <div class="ts-blog-meta">
+              <span class="ts-tag clay">Combat Devlog</span>
+              <span class="ts-blog-date">Nov 2026 · 4 min read</span>
             </div>
-            <div class="ts-field">
-              <label for="email">your email</label>
-              <input type="email" id="email" name="email" placeholder="Email" required>
+            <h3 class="ts-blog-title">Building The Last Train: Fluid Aerial Blade Combos in Unity URP</h3>
+            <p class="ts-blog-excerpt">
+              Designing hack-and-slash physics atop a hurtling train. How jump buffering, hitbox detection, and particle sparks make fast aerial combat feel punchy.
+            </p>
+            <div class="ts-blog-footer">
+              <button class="ts-read-btn" data-open-blog="last-train">Read Devlog →</button>
             </div>
-            <div class="ts-field">
-              <label for="message">message</label>
-              <textarea id="message" name="message" placeholder="What's on your mind?" required></textarea>
+          </div>
+        </article>
+
+        <!-- Blog 2: Time Traveler -->
+        <article class="ts-blog-card" data-blog-id="time-traveler">
+          <div class="ts-blog-thumb">
+            <img src="assets/images/projects/time-traveler.png" alt="Time Traveler devlog banner" loading="lazy">
+          </div>
+          <div class="ts-blog-content">
+            <div class="ts-blog-meta">
+              <span class="ts-tag honey">Hackathon Winner</span>
+              <span class="ts-blog-date">Oct 2026 · 5 min read</span>
             </div>
-            <button type="submit" class="ts-submit-btn" id="btnSubmitMessage">Send Message →</button>
-            <div id="formStatusMsg" class="form-status-msg hidden" role="alert"></div>
-          </form>
-        </div>
+            <h3 class="ts-blog-title">Time Traveler Post-Mortem: Designing Circular Temporal Puzzles</h3>
+            <p class="ts-blog-excerpt">
+              How we won 1st place at Just a Hackathon with state rewinds and chronological clone playback without causing game-breaking paradoxes.
+            </p>
+            <div class="ts-blog-footer">
+              <button class="ts-read-btn" data-open-blog="time-traveler">Read Devlog →</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Blog 3: Nightmare -->
+        <article class="ts-blog-card" data-blog-id="nightmare">
+          <div class="ts-blog-thumb">
+            <img src="assets/images/projects/nightmare.png" alt="Nightmare devlog banner" loading="lazy">
+          </div>
+          <div class="ts-blog-content">
+            <div class="ts-blog-meta">
+              <span class="ts-tag sage">Art &amp; Design</span>
+              <span class="ts-blog-date">Sep 2026 · 3 min read</span>
+            </div>
+            <h3 class="ts-blog-title">Atmospheric Silhouettes: Winning Best Art Direction at Geek-N-Jam</h3>
+            <p class="ts-blog-excerpt">
+              Crafting a dark fantasy fairy tale atmosphere through multi-plane parallax depth, rim lighting, and handcrafted environmental hazards.
+            </p>
+            <div class="ts-blog-footer">
+              <button class="ts-read-btn" data-open-blog="nightmare">Read Devlog →</button>
+            </div>
+          </div>
+        </article>
+
       </div>
     </section>
 
   </main>
+
+  <!-- ==========================================================================
+       Devlog Full Article Modal Reader
+       ========================================================================== -->
+  <div id="devlogModal" class="ts-modal-overlay hidden" aria-hidden="true">
+    <div class="ts-modal-card">
+      <button id="btnCloseModal" class="ts-modal-close" aria-label="Close article">✕</button>
+      <div id="devlogModalBody" class="ts-modal-body">
+        <!-- Injected dynamically via JavaScript -->
+      </div>
+    </div>
+  </div>
 
   <!-- ==========================================================================
        Minimal Footer
@@ -557,7 +584,7 @@
         <span class="dot">·</span>
         <button data-tab-target="projects">projects</button>
         <span class="dot">·</span>
-        <button data-tab-target="contact">contact</button>
+        <button data-tab-target="blog">blog</button>
       </div>
     </div>
   </footer>
@@ -571,7 +598,7 @@
   </script>
 
   <!-- Scripts -->
-  <script src="js/game.js?v=6.0"></script>
-  <script src="js/main.js?v=6.0"></script>
+  <script src="js/game.js?v=7.0"></script>
+  <script src="js/main.js?v=7.0"></script>
 </body>
 </html>
