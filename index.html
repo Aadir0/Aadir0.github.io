@@ -8,13 +8,13 @@
   <meta name="author" content="Aaditya Raj">
   <meta name="theme-color" content="#FAF6EE">
 
-  <!-- Fonts: Plus Jakarta Sans, Syne & JetBrains Mono -->
+  <!-- Fonts: Fraunces (Editorial Indie Serif), Nunito (Clean Friendly Body), Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=Nunito:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="css/style.css?v=4.0">
+  <link rel="stylesheet" href="css/style.css?v=4.5">
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥊</text></svg>">
@@ -101,15 +101,23 @@
       <span class="super-btn-key">[Q]</span>
     </button>
 
-    <!-- Start Overlay (Minimal, Docked at Bottom) -->
-    <div id="fightStartOverlay" class="fight-screen-overlay bottom-docked">
-      <div class="fight-modal-box">
+    <!-- Start Overlay (Centered in Middle between Both Fighters) -->
+    <div id="fightStartOverlay" class="fight-screen-overlay start-centered">
+      <div class="fight-modal-box start-panel-box">
+        <span class="start-panel-eyebrow">🥊 3D ARENA SHOWDOWN</span>
         <h2 class="fight-modal-title">Boxing Challenge</h2>
         <p class="fight-modal-desc">
           Defeat <strong>Aaditya Raj</strong> in the ring to enter his developer portfolio.
         </p>
 
-        <button id="btnStartFight" class="fight-btn-minimal">Start Match →</button>
+        <!-- Difficulty Selection -->
+        <div class="diff-picker-row">
+          <button class="diff-btn" data-diff="easy">Casual</button>
+          <button class="diff-btn selected" data-diff="normal">Normal</button>
+          <button class="diff-btn" data-diff="hardcore">Hardcore</button>
+        </div>
+
+        <button id="btnStartFight" class="fight-btn-minimal start-cta">Start Match →</button>
 
         <div class="fight-guide-line">
           <span><kbd>A</kbd> <kbd>D</kbd> Move</span>
@@ -122,7 +130,7 @@
           <span class="sep">·</span>
           <span><kbd>Right-Click</kbd> Block</span>
           <span class="sep">·</span>
-          <span><kbd>Q</kbd> Super Combo</span>
+          <span><kbd>Q</kbd> Super</span>
         </div>
       </div>
     </div>
@@ -273,6 +281,22 @@
       <p class="about-intro hero-enter">
         Crafting responsive gameplay systems, 2D &amp; 3D physics mechanics, and memorable indie games.
       </p>
+
+      <!-- Quick Platform Links (tsitski-inspired) -->
+      <div class="hero-quick-links hero-enter">
+        <a href="https://cholebhature-hehe.itch.io/" target="_blank" rel="noopener noreferrer" class="hero-pill-link">
+          <span class="pill-dot itch-dot"></span> Itch.io Profile ↗
+        </a>
+        <a href="https://github.com/Aadir0" target="_blank" rel="noopener noreferrer" class="hero-pill-link">
+          <span class="pill-dot gh-dot"></span> GitHub ↗
+        </a>
+        <a href="#projects" class="hero-pill-link highlight-pill">
+          Explore Games ↓
+        </a>
+        <a href="mailto:aadisingh3217@gmail.com" class="hero-pill-link">
+          Say Hello ✉
+        </a>
+      </div>
 
       <div class="about-narrative">
         <p>
@@ -557,13 +581,13 @@
           <div class="flip-card">
             <div class="flip-card-inner">
               <div class="flip-card-front">
-                <img src="assets/images/projects/the-last-train.png" alt="The Last Train banner" loading="lazy">
+                <img src="assets/images/projects/the-last-train.png" alt="The Last Train cover art" loading="lazy">
               </div>
               <div class="flip-card-back">
-                <h4>Atmospheric Narrative</h4>
-                <p>Cinematic lighting and moody shaders built in Unity.</p>
-                <a href="https://github.com/Aadir0/The-Last-Train" target="_blank" rel="noopener noreferrer" class="flip-hint-btn">
-                  View Repository ↗
+                <h4>Hack &amp; Slash Survival</h4>
+                <p>Hold the train roof against endless dark hordes with fast aerial blade combos.</p>
+                <a href="https://cholebhature-hehe.itch.io/the-last-train" target="_blank" rel="noopener noreferrer" class="flip-hint-btn">
+                  Play on Itch.io ↗
                 </a>
               </div>
             </div>
@@ -572,19 +596,21 @@
           <div class="project-info-block">
             <div class="project-header-line">
               <h3 class="project-name">The Last Train</h3>
-              <span class="project-award-tag">Atmospheric Experience</span>
+              <span class="project-award-tag">★ Action Survival</span>
             </div>
             <p class="project-summary">
-              An evocative atmospheric journey aboard an isolated train, focusing on custom post-processing, 
-              particle smoke, and cinematic mood design.
+              A fast-paced 2D pixel-art hack-and-slash action survival game set atop a hurtling train cutting through 
+              a dark desolate skyline. Defend against swarming skeleton warriors and flying witches with fluid aerial combos.
             </p>
             <div class="project-meta-row">
               <div class="tech-tags-wrap">
-                <span class="tech-tag-item">Unity</span>
-                <span class="tech-tag-item">Atmosphere</span>
-                <span class="tech-tag-item">Visual Design</span>
+                <span class="tech-tag-item">Unity (URP)</span>
+                <span class="tech-tag-item">C#</span>
+                <span class="tech-tag-item">Pixel Art</span>
+                <span class="tech-tag-item">Combat System</span>
               </div>
               <div class="project-cta-links">
+                <a href="https://cholebhature-hehe.itch.io/the-last-train" target="_blank" rel="noopener noreferrer" class="project-btn-link">Play Itch.io ↗</a>
                 <a href="https://github.com/Aadir0/The-Last-Train" target="_blank" rel="noopener noreferrer" class="project-btn-link">GitHub ↗</a>
               </div>
             </div>
@@ -761,7 +787,7 @@
   </script>
 
   <!-- Scripts -->
-  <script src="js/game.js?v=4.0"></script>
-  <script src="js/main.js?v=4.0"></script>
+  <script src="js/game.js?v=4.5"></script>
+  <script src="js/main.js?v=4.5"></script>
 </body>
 </html>
