@@ -1,22 +1,23 @@
 /**
- * Aaditya Raj - Portfolio Application (v7.0)
- * Clean, warm, and authentic indie game developer portfolio:
- * - Smooth name-swap: Aaditya -> cholebhature (no clipping, no dotted lines)
- * - 3D boxing game only on projects page
- * - Dedicated Devlogs & Blog section with full article reader modal
- * - Ambient cursor torch & gentle star dust
+ * Aaditya Raj - Portfolio Application (v8.0)
+ * Minimalist, authentic indie game developer portfolio:
+ * - Smooth name-swap: Aaditya Raj <-> cholebhature (no clipping, no dotted lines)
+ * - Clean tactile project list inspired by tsitski.com
+ * - Auto-syncing Devlogs via RSS with external read links
+ * - 3D boxing game accessible from projects page
+ * - Ambient cursor torch & gentle golden star dust
  */
 
 document.addEventListener('DOMContentLoaded', () => {
   initNameSwap();
   initBoxingMiniGame();
   initTabNavigation();
-  initDevlogReader();
+  initDevlogSync();
   initMouseTorchAndGlitter();
 });
 
 /* ==========================================================================
-   1. Name Swap Effect: Aaditya -> cholebhature (Clean & Seamless)
+   1. Name Swap Effect: Aaditya Raj <-> cholebhature (Clean & Seamless)
    ========================================================================== */
 function initNameSwap() {
   const nameSwap = document.getElementById('heroNameSwap') || document.querySelector('.name-swap');
@@ -179,113 +180,79 @@ function initTabNavigation() {
 }
 
 /* ==========================================================================
-   4. Devlogs & Blog Modal Reader
+   4. Devlogs Auto-Sync & External Link Management
    ========================================================================== */
-const blogPosts = {
-  'last-train': {
-    title: 'Building The Last Train: Fluid Aerial Blade Combos in Unity URP',
-    meta: 'Combat Systems · Unity (URP) · Nov 2026',
-    image: 'assets/images/projects/the-last-train.png',
-    content: `
-      <p>When developing <strong>The Last Train</strong>, the primary goal was to make combat feel snappy and airborne rather than grounded and sluggish. The player fights swarms of skeletons and flying witches atop a hurtling train cutting through the night.</p>
-      
-      <p>Here are the core gameplay systems we engineered to achieve that responsive arcade feel:</p>
-
-      <h3>1. Jump Buffering and Coyote Time</h3>
-      <p>In fast platformers, pressing jump a split second before hitting the ground should never drop your input. We implemented an 8-frame input buffer queue and 6-frame coyote timer. This makes landing directly into another leap or blade slash feel immediate and seamless.</p>
-
-      <h3>2. Aerial Combat & Hitstop Sparks</h3>
-      <p>Landing a mid-air blade hit momentarily freezes the character for <code>45 milliseconds</code> (hitstop) before resuming velocity. Combined with directional particle sparks, screen-shake, and an upward lift impulse, stringing 4-hit air juggles feels exceptionally juicy.</p>
-
-      <h3>3. Performance atop a Hurtling Train</h3>
-      <p>Instead of moving the train across an endless infinite terrain, the train remains stationary at the origin while the procedural skyline, track ties, and wind particles scroll backward at 60 km/h. This completely eliminated floating-point jitter while maintaining cinematic speed.</p>
-    `
-  },
-  'time-traveler': {
-    title: 'Time Traveler Post-Mortem: Designing Circular Temporal Puzzles',
-    meta: 'Hackathon Winner · Unity & C# · Oct 2026',
-    image: 'assets/images/projects/time-traveler.png',
-    content: `
-      <p><strong>Time Traveler</strong> was created for and awarded 1st Place at <em>Just a Hackathon</em>. The challenge was building an intuitive temporal loop mechanic within a strict 48-hour jam deadline.</p>
-
-      <h3>The Core Time-Loop Mechanic</h3>
-      <p>The player can trigger a timeline record. Every action, step, and button press is recorded into a cyclical keyframe buffer. Upon pressing rewind, time rewinds smoothly, and a holographic clone repeats your exact recorded actions while you move freely as a new iteration.</p>
-
-      <h3>Solving the Paradox Dilemma</h3>
-      <p>A classic puzzle trap in time travel games is creating state deadlocks (e.g. clone pushes a block, but the current iteration removes that block). We resolved this by treating temporal clones as deterministic shadow actors with spatial collision priority, preventing physics instability and frustrating desyncs.</p>
-
-      <h3>Key Takeaway</h3>
-      <p>Simple puzzle elements—like opening a gate while your past self steps on a pressure plate—become immensely rewarding when paired with crisp clock audio ticks and reverse-dissolve shaders.</p>
-    `
-  },
-  'nightmare': {
-    title: 'Atmospheric Silhouettes: Winning Best Art Direction at Geek-N-Jam',
-    meta: 'Geek-N-Jam Winner · Visual Design · Sep 2026',
-    image: 'assets/images/projects/nightmare.png',
-    content: `
-      <p>Co-developed with Rishabh Surana for the Geek-N-Jam game jam, <strong>Nightmare — A fairy tale</strong> was honored with the <em>Best Art Direction Award</em>. Our vision was an eerie, Grimm-style dark fantasy platformer where the environment itself tells a story.</p>
-
-      <h3>Multi-Plane Parallax Depth</h3>
-      <p>To give the 2D world cinematic depth, we separated the visuals into 5 distinct parallax layers: twisted foreground roots, player playfield, misty midground trees, ruined silhouette castles, and a desolate glowing moon.</p>
-
-      <h3>Dynamic Rim Lighting</h3>
-      <p>Using Unity's 2D Light system, characters cast real-time soft shadows against foreground hazards while receiving a delicate amber rim glow from ambient fireflies. This kept the player instantly readable against pitch-dark backdrops.</p>
-
-      <h3>Juicy Audio-Visual Polish</h3>
-      <p>Every jump and environmental landing kicks up atmospheric mist particles paired with soft wooden thuds, grounding the fairy tale world in physical texture.</p>
-    `
-  }
+// Feed Configuration: Change this URL to your itch.io, Substack, Medium, or Hashnode RSS feed!
+const DEVLOG_CONFIG = {
+  feedUrl: 'https://cholebhature-hehe.itch.io/feed/devlog.rss',
+  fallbackPlatformName: 'itch.io'
 };
 
-function initDevlogReader() {
-  const modal = document.getElementById('devlogModal');
-  const modalBody = document.getElementById('devlogModalBody');
-  const closeBtn = document.getElementById('btnCloseModal');
-  if (!modal || !modalBody) return;
+async function initDevlogSync() {
+  const container = document.getElementById('blogPostsContainer');
+  if (!container || !DEVLOG_CONFIG.feedUrl) return;
 
-  function openPost(postId) {
-    const post = blogPosts[postId];
-    if (!post) return;
+  try {
+    const rssApiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(DEVLOG_CONFIG.feedUrl)}`;
+    const response = await fetch(rssApiUrl, { cache: 'no-store' });
+    if (!response.ok) return;
 
-    modalBody.innerHTML = `
-      <span class="modal-meta">${post.meta}</span>
-      <h2>${post.title}</h2>
-      <img src="${post.image}" alt="${post.title}" loading="lazy">
-      <div class="modal-article-text">${post.content}</div>
-    `;
+    const data = await response.json();
+    if (data.status === 'ok' && Array.isArray(data.items) && data.items.length > 0) {
+      container.innerHTML = '';
+      data.items.slice(0, 8).forEach(item => {
+        // Extract or fallback cover image
+        let coverImg = item.thumbnail || (item.enclosure && item.enclosure.link);
+        if (!coverImg && item.content) {
+          const match = item.content.match(/<img[^>]+src=["']([^"']+)["']/i);
+          if (match) coverImg = match[1];
+        }
+        if (!coverImg) {
+          coverImg = 'assets/images/projects/the-last-train.png';
+        }
 
-    modal.classList.remove('hidden');
-    modal.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-  }
+        // Clean snippet
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = item.description || item.content || '';
+        const excerpt = (tempDiv.textContent || tempDiv.innerText || '').trim().slice(0, 140) + '...';
 
-  function closeModal() {
-    modal.classList.add('hidden');
-    modal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-  }
+        // Format date
+        let dateStr = '';
+        if (item.pubDate) {
+          const d = new Date(item.pubDate);
+          if (!isNaN(d.getTime())) {
+            dateStr = d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+          }
+        }
 
-  document.querySelectorAll('[data-open-blog]').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const postId = btn.getAttribute('data-open-blog');
-      openPost(postId);
-    });
-  });
-
-  if (closeBtn) {
-    closeBtn.addEventListener('click', closeModal);
-  }
-
-  modal.addEventListener('click', (e) => {
-    if (e.target === modal) closeModal();
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-      closeModal();
+        const card = document.createElement('article');
+        card.className = 'ts-blog-card';
+        card.innerHTML = `
+          <div class="ts-blog-thumb">
+            <img src="${coverImg}" alt="${item.title}" loading="lazy">
+          </div>
+          <div class="ts-blog-content">
+            <div class="ts-blog-meta">
+              <span class="ts-blog-date">${dateStr || 'Recent'}</span>
+              <span class="ts-link-sep">·</span>
+              <span class="ts-blog-tag">${DEVLOG_CONFIG.fallbackPlatformName}</span>
+            </div>
+            <h3 class="ts-blog-title">${item.title}</h3>
+            <p class="ts-blog-excerpt">${excerpt}</p>
+            <div class="ts-blog-footer">
+              <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="ts-simple-link">
+                Read on ${DEVLOG_CONFIG.fallbackPlatformName} ↗
+              </a>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
     }
-  });
+  } catch (err) {
+    // If the feed is new or network is down, the static fallback cards stay active
+    console.log('Devlog feed using fallback:', err);
+  }
 }
 
 /* ==========================================================================
@@ -295,7 +262,7 @@ function initMouseTorchAndGlitter() {
   const torch = document.getElementById('cursorGlowLight');
   const canvas = document.getElementById('glitterCanvas');
 
-  // Torch Spotlight
+  // Torch Spotlight (Soft warm radial sheen on light paper)
   if (torch) {
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
@@ -311,9 +278,6 @@ function initMouseTorchAndGlitter() {
         torchActive = true;
         torch.classList.add('active');
       }
-
-      document.documentElement.style.setProperty('--mouse-x', `${mouseX}px`);
-      document.documentElement.style.setProperty('--mouse-y', `${mouseY}px`);
     }, { passive: true });
 
     window.addEventListener('pointerleave', () => {
@@ -332,7 +296,7 @@ function initMouseTorchAndGlitter() {
     animateTorch();
   }
 
-  // Glitter Canvas
+  // Glitter Canvas (Gentle golden amber star dust)
   if (canvas) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -340,7 +304,7 @@ function initMouseTorchAndGlitter() {
     let width = 0;
     let height = 0;
     const particles = [];
-    const PARTICLE_COUNT = 30;
+    const PARTICLE_COUNT = 24;
 
     function resize() {
       width = window.innerWidth;
@@ -348,84 +312,57 @@ function initMouseTorchAndGlitter() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = width * dpr;
       canvas.height = height * dpr;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.scale(dpr, dpr);
     }
 
-    resize();
-    window.addEventListener('resize', resize, { passive: true });
-
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      particles.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.2,
-        vy: -0.1 - Math.random() * 0.25,
-        size: 0.8 + Math.random() * 1.5,
-        baseAlpha: 0.2 + Math.random() * 0.5,
-        phase: Math.random() * Math.PI * 2,
-        pulseSpeed: 0.012 + Math.random() * 0.02,
-        isStar: Math.random() > 0.65
-      });
-    }
-
-    function drawSparkle(cx, cy, r, alpha) {
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.fillStyle = `rgba(255, 225, 175, ${alpha})`;
-
-      ctx.beginPath();
-      ctx.moveTo(0, -r * 2);
-      ctx.quadraticCurveTo(0, 0, r * 2, 0);
-      ctx.quadraticCurveTo(0, 0, 0, r * 2);
-      ctx.quadraticCurveTo(0, 0, -r * 2, 0);
-      ctx.quadraticCurveTo(0, 0, 0, -r * 2);
-      ctx.fill();
-
-      ctx.beginPath();
-      ctx.arc(0, 0, r * 0.5, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255, 245, 230, ${Math.min(alpha * 1.3, 1)})`;
-      ctx.fill();
-      ctx.restore();
-    }
-
-    let isVisible = true;
-    document.addEventListener('visibilitychange', () => {
-      isVisible = !document.hidden;
-    });
-
-    function renderGlitter() {
-      if (!isVisible) {
-        requestAnimationFrame(renderGlitter);
-        return;
+    class StarParticle {
+      constructor() {
+        this.reset();
       }
 
-      ctx.clearRect(0, 0, width, height);
+      reset() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.size = Math.random() * 1.5 + 0.6;
+        this.alpha = Math.random() * 0.45 + 0.15;
+        this.fadeSpeed = (Math.random() * 0.008 + 0.004) * (Math.random() > 0.5 ? 1 : -1);
+      }
 
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.phase += p.pulseSpeed;
-
-        if (p.y < -10) p.y = height + 10;
-        if (p.x < -10) p.x = width + 10;
-        if (p.x > width + 10) p.x = -10;
-
-        const currentAlpha = p.baseAlpha * (0.4 + 0.6 * Math.sin(p.phase));
-
-        if (p.isStar) {
-          drawSparkle(p.x, p.y, p.size, currentAlpha);
-        } else {
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255, 215, 160, ${currentAlpha * 0.75})`;
-          ctx.fill();
+      update() {
+        this.alpha += this.fadeSpeed;
+        if (this.alpha > 0.65) {
+          this.alpha = 0.65;
+          this.fadeSpeed = -Math.abs(this.fadeSpeed);
+        } else if (this.alpha < 0.08) {
+          this.alpha = 0.08;
+          this.fadeSpeed = Math.abs(this.fadeSpeed);
         }
       }
 
-      requestAnimationFrame(renderGlitter);
+      draw() {
+        ctx.fillStyle = `rgba(195, 120, 35, ${this.alpha})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
 
-    renderGlitter();
+    resize();
+    window.addEventListener('resize', resize);
+
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push(new StarParticle());
+    }
+
+    function animateGlitter() {
+      ctx.clearRect(0, 0, width, height);
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+      }
+      requestAnimationFrame(animateGlitter);
+    }
+    animateGlitter();
   }
 }

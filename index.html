@@ -2,35 +2,40 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Aaditya Raj — Game Developer</title>
-  <meta name="description" content="Hi, I'm Aaditya Raj (cholebhature). I make indie video games in Unity & C#.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aaditya Raj — Game Developer &amp; Programmer</title>
+  <meta name="description" content="Portfolio of Aaditya Raj (cholebhature) — Indie Game Developer & Programmer. Unity, C#, 2D/3D Games, Hackathons & Game Jams.">
+  <meta name="keywords" content="Aaditya Raj, cholebhature, Game Developer, Unity, C#, Indie Game, Time Traveler, The Last Train, Nightmare">
   <meta name="author" content="Aaditya Raj">
-  <meta name="theme-color" content="#2c241e">
 
-  <!-- Fonts: Plus Jakarta Sans (Clean Modern Heading) & Nunito (Warm Body) -->
+  <!-- Open Graph -->
+  <meta property="og:title" content="Aaditya Raj — Game Developer &amp; Programmer">
+  <meta property="og:description" content="Indie game developer crafting games in Unity &amp; C#.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://cholebhature.me">
+
+  <!-- Clean Editorial Typography: Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Nunito:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,500;0,600;0,700;0,800;1,700;1,800&display=swap" rel="stylesheet">
 
-  <!-- Stylesheet -->
-  <link rel="stylesheet" href="css/style.css?v=7.0">
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥊</text></svg>">
+  <link rel="stylesheet" href="css/style.css?v=8.0">
+  <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
 </head>
 <body>
 
-  <!-- Ambient Cursor Glow & Glitter Particle Canvas (tsitski-inspired) -->
+  <!-- Ambient Cursor Glow Spotlight -->
   <div id="cursorGlowLight" class="cursor-glow-light" aria-hidden="true"></div>
+
+  <!-- Ambient Star Dust Canvas -->
   <canvas id="glitterCanvas" class="glitter-canvas" aria-hidden="true"></canvas>
 
   <!-- ==========================================================================
-       3D Boxing Mini-Game (Only opened from the Projects page)
+       3D ARENA FIGHTING GAME (Opened only when clicking "play boxing game")
        ========================================================================== -->
-  <div id="fightScreenRoot" class="fighter-screen hidden" style="display: none;">
+  <div id="fightScreenRoot" class="fight-screen-container" style="display: none;">
+    <!-- 3D WebGL Canvas Layer -->
     <canvas id="fightCanvas"></canvas>
-    <div class="fight-vignette" aria-hidden="true"></div>
 
     <!-- Exit Game Button (Always accessible top-right) -->
     <button id="btnCloseFightScreen" class="btn-close-fight-top" aria-label="Exit Game to Portfolio">
@@ -73,120 +78,113 @@
       <div id="fightVsBadge" class="vs-badge">VS</div>
 
       <!-- AI Opponent: Aaditya Raj -->
-      <div class="fighter-hud-card enemy-hud">
+      <div class="fighter-hud-card ai-hud">
         <div class="fighter-name-tag">
           <span class="fighter-tag-dot orange">●</span>
-          <span id="enemyNameLabel" class="fighter-label">Aaditya Raj (AI)</span>
-          <span class="hp-val-wrap"><span id="enemyHpVal">100</span> HP</span>
+          <span class="fighter-label">AADITYA RAJ</span>
+          <span class="hp-val-wrap"><span id="aiHpVal">100</span> HP</span>
         </div>
         <div class="hp-bar-track">
-          <div id="enemyHpLag" class="hp-bar-lag enemy" style="width: 100%;"></div>
-          <div id="enemyHpFill" class="hp-bar-fill enemy-hp" style="width: 100%;"></div>
+          <div id="aiHpLag" class="hp-bar-lag" style="width: 100%;"></div>
+          <div id="aiHpFill" class="hp-bar-fill" style="width: 100%;"></div>
         </div>
-        <div class="sp-bar-wrap enemy-sp">
-          <div class="sp-bar-track enemy-track">
-            <div id="enemySpFill" class="sp-bar-fill enemy-fill" style="width: 0%;"></div>
+        <div class="sp-bar-wrap">
+          <div class="sp-bar-track">
+            <div id="aiSpFill" class="sp-bar-fill" style="width: 0%;"></div>
           </div>
-          <span id="enemySpLabel" class="sp-label">SUPER 0%</span>
+          <span id="aiSpLabel" class="sp-label">SUPER 0%</span>
+        </div>
+        <div class="hud-cd-wrap">
+          <div class="cd-track">
+            <div id="aiCdFill" class="cd-fill ready" style="width: 100%;"></div>
+          </div>
+          <span class="cd-label">OPPONENT PRIMED</span>
         </div>
       </div>
     </div>
 
-    <!-- Floating Combo Counter -->
-    <div id="arcadeComboToast" class="arcade-combo-toast hidden" aria-live="polite">
-      <div id="comboNum" class="combo-num">2</div>
-      <div class="combo-text-group">
-        <span class="combo-title">HITS!</span>
-        <span id="comboRating" class="combo-rating">COMBO!</span>
-      </div>
-    </div>
+    <!-- Center Arena Announcement Floating Banner -->
+    <div id="fightAnnounceText" class="fight-announce-banner"></div>
 
-    <!-- Desktop Super Move Button -->
-    <button id="btnSuperMove" class="btn-super-move hidden" aria-label="Unleash Dragon Super Combo">
-      <span class="super-fire-icon">🔥</span>
-      <span class="super-btn-txt">SUPER COMBO</span>
-      <span class="super-btn-key">[Q]</span>
-    </button>
-
-    <!-- Start Overlay Inside Arena -->
-    <div id="fightStartOverlay" class="fight-screen-overlay start-centered">
-      <div class="arena-menu-card">
-        <div class="arena-tag-badge">
-          <span>🥊 3D ARENA MINI-GAME</span>
+    <!-- START / READY OVERLAY (Centered between boxers) -->
+    <div id="fightStartOverlay" class="fight-overlay-modal start-modal">
+      <div class="fight-start-card">
+        <div class="fight-mode-pill">
+          <span>🥊 3D ARENA SHOWDOWN</span>
         </div>
-        <h2 class="arena-menu-title">Boxing Challenge</h2>
-        <p class="arena-menu-subtitle">
-          Ready to refresh your mood? Fight a friendly round in the ring.
+        <h2 class="fight-modal-title">Boxing Challenge</h2>
+        <p class="fight-modal-desc">
+          Defeat <strong>Aaditya Raj</strong> in the ring to enter his developer portfolio.
         </p>
 
-        <!-- Segmented Difficulty Control -->
-        <div class="segmented-diff-wrap" role="group" aria-label="Match difficulty">
-          <button class="diff-btn" data-diff="easy">Casual</button>
-          <button class="diff-btn selected" data-diff="normal">Normal</button>
-          <button class="diff-btn" data-diff="hardcore">Hardcore 🔥</button>
+        <!-- Difficulty Selection -->
+        <div class="diff-picker-row" role="group" aria-label="Game Difficulty">
+          <button class="diff-btn" data-diff="casual" type="button">Casual</button>
+          <button class="diff-btn selected" data-diff="normal" type="button">Normal</button>
+          <button class="diff-btn" data-diff="hardcore" type="button">Hardcore</button>
         </div>
 
-        <button id="btnStartFight" class="arena-start-btn">
-          <span>Start Match</span>
-          <span class="btn-arrow-icon">→</span>
+        <button id="btnStartFight" class="btn-fight-primary" type="button">
+          Start Match →
         </button>
 
-        <div class="arena-controls-hint">
-          <span><strong>WASD</strong> Move</span>
-          <span class="dot-sep">•</span>
-          <span><strong>Space</strong> Jump</span>
-          <span class="dot-sep">•</span>
-          <span><strong>Click</strong> Punch</span>
-          <span class="dot-sep">•</span>
-          <span><strong>E</strong> Kick</span>
-          <span class="dot-sep">•</span>
-          <span><strong>Q</strong> Super</span>
+        <!-- Desktop Keyboard Shortcuts Helper -->
+        <div class="fight-keys-legend">
+          <span class="key-pill">A</span><span class="key-pill">D</span> Move &nbsp;·&nbsp;
+          <span class="key-pill">Space</span> Jump &nbsp;·&nbsp;
+          <span class="key-pill">Left-Click</span> Punch &nbsp;·&nbsp;
+          <span class="key-pill">E</span> / <span class="key-pill">K</span> Kick &nbsp;·&nbsp;
+          <span class="key-pill">Right-Click</span> Block &nbsp;·&nbsp;
+          <span class="key-pill">Q</span> Super
         </div>
       </div>
     </div>
 
-    <!-- Victory Overlay -->
-    <div id="fightWinOverlay" class="fight-screen-overlay bottom-docked transparent-overlay hidden">
-      <div class="fight-modal-box">
-        <h2 id="winTitleText" class="fight-modal-title win">Victory!</h2>
-        <p id="winSubtitleText" class="fight-modal-desc">
-          Nice fight! Mood refreshed.
+    <!-- WIN VICTORY OVERLAY -->
+    <div id="fightWinOverlay" class="fight-overlay-modal hidden">
+      <div class="fight-win-card">
+        <div class="win-trophy-icon">🏆</div>
+        <h2 class="fight-win-title">KNOCKOUT VICTORY!</h2>
+        <p class="fight-win-desc">
+          You conquered Aaditya Raj in the ring! Welcome to his portfolio.
         </p>
-        <button id="btnEnterFromFight" class="fight-btn-minimal win">Back to Website →</button>
+        <div class="fight-stat-chips">
+          <span id="winStatTime" class="stat-chip">Time: 18s</span>
+          <span id="winStatHits" class="stat-chip">Hits: 12</span>
+        </div>
+        <button id="btnEnterFromFight" class="btn-fight-primary">
+          Enter Portfolio →
+        </button>
       </div>
     </div>
 
-    <!-- Defeat Overlay -->
-    <div id="fightLoseOverlay" class="fight-screen-overlay bottom-docked transparent-overlay hidden">
-      <div class="fight-modal-box">
-        <h2 class="fight-modal-title defeat">Knocked Out</h2>
-        <p class="fight-modal-desc">
-          Aaditya caught you with a counter-punch!
+    <!-- LOSE / RETRY OVERLAY -->
+    <div id="fightLoseOverlay" class="fight-overlay-modal hidden">
+      <div class="fight-lose-card">
+        <div class="lose-skull-icon">🥊</div>
+        <h2 class="fight-lose-title">KNOCKED DOWN!</h2>
+        <p class="fight-lose-desc">
+          Aaditya Raj proved too tough this round! Shake off the dust and try again.
         </p>
-        <div class="modal-btn-row">
-          <button id="btnRetryFight" class="fight-btn-minimal">Rematch</button>
-          <button id="btnSkipFromLose" class="fight-btn-subtle">Back to Website →</button>
+        <div class="lose-btn-row">
+          <button id="btnRetryFight" class="btn-fight-primary">
+            Rematch ↺
+          </button>
+          <button id="btnSkipFromLose" class="btn-fight-secondary">
+            Skip to Portfolio →
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- Bottom Controls Guide -->
-    <div class="fight-bottom-hud">
-      <div class="fight-key-guide">
-        <span><strong class="key-tag">A / D</strong> Move</span>
-        <span><strong class="key-tag">Space</strong> Jump</span>
-        <span><strong class="key-tag">Left Click</strong> Punch</span>
-        <span><strong class="key-tag">E / K</strong> Kick</span>
-        <span><strong class="key-tag">Right Click</strong> Block</span>
-        <span><strong class="key-tag">Q</strong> Super</span>
-      </div>
-      <button id="btnSkipFight" class="btn-skip-fight desktop-skip">Back to Website →</button>
-      <button id="btnSkipFightMobile" class="btn-skip-fight mobile-skip">Exit ✕</button>
-    </div>
+    <!-- Floating Super Move Button (Pops when Super meter reaches 100%) -->
+    <button id="btnSuperMove" class="btn-super-floater hidden" aria-label="Activate Super Knockout Combo">
+      ⚡ SUPER COMBO READY (Q)
+    </button>
 
-    <!-- Mobile Touch Gamepad -->
-    <div class="mobile-fight-touch">
-      <div class="mobile-touch-cluster dpad-cluster" id="mobileDpadZone">
+    <!-- MOBILE ON-SCREEN TOUCH CONTROLS -->
+    <div id="mobileTouchControls" class="mobile-touch-rig">
+      <div class="mobile-touch-cluster dpad-cluster">
         <div class="dpad-capsule">
           <button id="btnMobileLeft" class="touch-btn touch-move-btn" aria-label="Move Left">◀</button>
           <div class="dpad-divider"></div>
@@ -227,44 +225,28 @@
   </header>
 
   <!-- ==========================================================================
-       Main Content Stage (Clean, Warm, Not Too Dark)
+       Main Content Stage (Clean Warm Linen Paper, Minimal & Elegant)
        ========================================================================== -->
   <main class="ts-main ts-container">
 
     <!-- ========================================================================
-         1. About View
+         1. Home / About View (Clean, Minimal, No Button, No Clutter)
          ======================================================================== -->
     <section id="about" class="ts-panel active" role="tabpanel" tabindex="0">
       <div class="ts-hero">
         <h1 class="ts-hero-title">
           hi, i'm <span class="name-swap" id="heroNameSwap">
-            <span class="name-from">Aaditya</span>
+            <span class="name-from">Aaditya Raj</span>
             <span class="name-to" aria-hidden="true">cholebhature</span>
           </span>
         </h1>
 
         <p class="ts-hero-bio">
-          I make video games and a bunch of other stuff.
+          Game developer crafting indie games in <span class="ts-highlight">Unity &amp; C#</span>.
         </p>
-
-        <p class="ts-hero-sub">
-          Right now most of my time is spent crafting indie games in <span class="ts-highlight">Unity &amp; C#</span>.
-        </p>
-
-        <!-- Clean Direct Work Link Card -->
-        <div class="ts-quick-row">
-          <button class="ts-simple-card" data-tab-target="projects">
-            <span class="ts-card-icon">🎮</span>
-            <span class="ts-card-text">
-              <span class="ts-card-sub">my work</span>
-              <span class="ts-card-name">the games I'm making</span>
-            </span>
-            <span class="ts-card-arrow">→</span>
-          </button>
-        </div>
       </div>
 
-      <!-- Simple Highlights & Milestones -->
+      <!-- Highlights & Milestones -->
       <div class="ts-section-block">
         <h2 class="ts-subheading">a little about me</h2>
         <div class="ts-simple-list">
@@ -320,23 +302,22 @@
     </section>
 
     <!-- ========================================================================
-         2. Projects View (Simple tactile cards like tsitski.com)
+         2. Projects View (Clean & Minimal, Like tsitski.com)
          ======================================================================== -->
     <section id="projects" class="ts-panel" role="tabpanel" tabindex="0">
       <div class="ts-panel-top">
         <div>
-          <h2 class="ts-page-title">the games I'm making</h2>
+          <h2 class="ts-page-title">the games i'm making</h2>
           <p class="ts-page-desc">6 indie games built for game jams, hackathons, and fun.</p>
         </div>
 
-        <!-- Refresh your mood button: ONLY in the projects page -->
+        <!-- Subtle boxing game button -->
         <button class="ts-mood-btn" id="btnProjectsMood">
-          <span class="glove-icon">🥊</span>
-          <span>Refresh your mood</span>
+          <span>🥊 play boxing game →</span>
         </button>
       </div>
 
-      <!-- Simple tactile cards -->
+      <!-- Clean Minimal Project List -->
       <div class="ts-games-list">
 
         <!-- 1. Nightmare - A fairy tale -->
@@ -347,18 +328,15 @@
           <div class="ts-game-details">
             <div class="ts-game-header">
               <h3 class="ts-game-title">Nightmare — A fairy tale</h3>
-              <span class="ts-tag sage">Geek-N-Jam Winner</span>
+              <span class="ts-game-meta">Best Art Direction · Geek-N-Jam</span>
             </div>
             <p class="ts-game-desc">
-              Dark fantasy platformer with atmospheric art and environmental hazards. Awarded Best Art Direction.
+              Dark fantasy platformer with atmospheric art and environmental hazards.
             </p>
             <div class="ts-game-links">
-              <a href="https://surana-rishabh.itch.io/nightmare-a-fairy-tale" target="_blank" rel="noopener noreferrer" class="ts-link-btn">
-                <span>itch.io</span> ↗
-              </a>
-              <a href="https://github.com/Aadir0/Nightmare-A-fairy-tale" target="_blank" rel="noopener noreferrer" class="ts-link-btn secondary">
-                <span>GitHub</span> ↗
-              </a>
+              <a href="https://surana-rishabh.itch.io/nightmare-a-fairy-tale" target="_blank" rel="noopener noreferrer" class="ts-simple-link">itch.io ↗</a>
+              <span class="ts-link-sep">·</span>
+              <a href="https://github.com/Aadir0/Nightmare-A-fairy-tale" target="_blank" rel="noopener noreferrer" class="ts-simple-link">github ↗</a>
             </div>
           </div>
         </article>
@@ -371,18 +349,15 @@
           <div class="ts-game-details">
             <div class="ts-game-header">
               <h3 class="ts-game-title">Time Traveler</h3>
-              <span class="ts-tag honey">1st Place Hackathon</span>
+              <span class="ts-game-meta">1st Place · Just a Hackathon</span>
             </div>
             <p class="ts-game-desc">
-              Puzzle game where players record timeline loops and state rewinds to solve sequential mechanisms.
+              Puzzle game where players record timeline loops to solve sequential mechanisms.
             </p>
             <div class="ts-game-links">
-              <a href="https://cholebhature-hehe.itch.io/time-traveler" target="_blank" rel="noopener noreferrer" class="ts-link-btn">
-                <span>itch.io</span> ↗
-              </a>
-              <a href="https://github.com/Aadir0/Time-Traveler" target="_blank" rel="noopener noreferrer" class="ts-link-btn secondary">
-                <span>GitHub</span> ↗
-              </a>
+              <a href="https://cholebhature-hehe.itch.io/time-traveler" target="_blank" rel="noopener noreferrer" class="ts-simple-link">itch.io ↗</a>
+              <span class="ts-link-sep">·</span>
+              <a href="https://github.com/Aadir0/Time-Traveler" target="_blank" rel="noopener noreferrer" class="ts-simple-link">github ↗</a>
             </div>
           </div>
         </article>
@@ -395,18 +370,15 @@
           <div class="ts-game-details">
             <div class="ts-game-header">
               <h3 class="ts-game-title">The Last Train</h3>
-              <span class="ts-tag clay">Action Survival</span>
+              <span class="ts-game-meta">Action Survival</span>
             </div>
             <p class="ts-game-desc">
-              Fast-paced pixel hack-and-slash blade survival atop a hurtling train cutting through the night.
+              Fast-paced pixel blade hack-and-slash atop a hurtling midnight train.
             </p>
             <div class="ts-game-links">
-              <a href="https://cholebhature-hehe.itch.io/the-last-train" target="_blank" rel="noopener noreferrer" class="ts-link-btn">
-                <span>itch.io</span> ↗
-              </a>
-              <a href="https://github.com/Aadir0/The-Last-Train" target="_blank" rel="noopener noreferrer" class="ts-link-btn secondary">
-                <span>GitHub</span> ↗
-              </a>
+              <a href="https://cholebhature-hehe.itch.io/the-last-train" target="_blank" rel="noopener noreferrer" class="ts-simple-link">itch.io ↗</a>
+              <span class="ts-link-sep">·</span>
+              <a href="https://github.com/Aadir0/The-Last-Train" target="_blank" rel="noopener noreferrer" class="ts-simple-link">github ↗</a>
             </div>
           </div>
         </article>
@@ -419,15 +391,13 @@
           <div class="ts-game-details">
             <div class="ts-game-header">
               <h3 class="ts-game-title">ILLegal Moves</h3>
-              <span class="ts-tag">StarCade Jam</span>
+              <span class="ts-game-meta">StarCade Jam</span>
             </div>
             <p class="ts-game-desc">
-              Precision platformer with subverted rules, trick collisions, and unexpected movement instincts.
+              Precision platformer with subverted rules and unexpected collision tricks.
             </p>
             <div class="ts-game-links">
-              <a href="https://cholebhature-hehe.itch.io/illegal-moves" target="_blank" rel="noopener noreferrer" class="ts-link-btn">
-                <span>itch.io</span> ↗
-              </a>
+              <a href="https://cholebhature-hehe.itch.io/illegal-moves" target="_blank" rel="noopener noreferrer" class="ts-simple-link">itch.io ↗</a>
             </div>
           </div>
         </article>
@@ -440,18 +410,15 @@
           <div class="ts-game-details">
             <div class="ts-game-header">
               <h3 class="ts-game-title">DriftIT</h3>
-              <span class="ts-tag">Local 2P Racing</span>
+              <span class="ts-game-meta">2P Local Co-op</span>
             </div>
             <p class="ts-game-desc">
-              Top-down 2-player local drift racing simulator with realistic vehicle tire friction and slip physics.
+              Top-down 2-player local drift racing simulator with tire friction physics.
             </p>
             <div class="ts-game-links">
-              <a href="https://cholebhature-hehe.itch.io/driftit" target="_blank" rel="noopener noreferrer" class="ts-link-btn">
-                <span>itch.io</span> ↗
-              </a>
-              <a href="https://github.com/Aadir0/DriftIT" target="_blank" rel="noopener noreferrer" class="ts-link-btn secondary">
-                <span>GitHub</span> ↗
-              </a>
+              <a href="https://cholebhature-hehe.itch.io/driftit" target="_blank" rel="noopener noreferrer" class="ts-simple-link">itch.io ↗</a>
+              <span class="ts-link-sep">·</span>
+              <a href="https://github.com/Aadir0/DriftIT" target="_blank" rel="noopener noreferrer" class="ts-simple-link">github ↗</a>
             </div>
           </div>
         </article>
@@ -464,18 +431,15 @@
           <div class="ts-game-details">
             <div class="ts-game-header">
               <h3 class="ts-game-title">Strange Rooms</h3>
-              <span class="ts-tag">Brackeys Jam</span>
+              <span class="ts-game-meta">Brackeys Jam</span>
             </div>
             <p class="ts-game-desc">
-              Atmospheric puzzle game exploring optical room manipulation, perspective shifts, and lighting.
+              Atmospheric puzzle game exploring optical room manipulation and perspective shifts.
             </p>
             <div class="ts-game-links">
-              <a href="https://cholebhature-hehe.itch.io/strange-rooms" target="_blank" rel="noopener noreferrer" class="ts-link-btn">
-                <span>itch.io</span> ↗
-              </a>
-              <a href="https://github.com/Aadir0/Strange-Rooms" target="_blank" rel="noopener noreferrer" class="ts-link-btn secondary">
-                <span>GitHub</span> ↗
-              </a>
+              <a href="https://cholebhature-hehe.itch.io/strange-rooms" target="_blank" rel="noopener noreferrer" class="ts-simple-link">itch.io ↗</a>
+              <span class="ts-link-sep">·</span>
+              <a href="https://github.com/Aadir0/Strange-Rooms" target="_blank" rel="noopener noreferrer" class="ts-simple-link">github ↗</a>
             </div>
           </div>
         </article>
@@ -484,74 +448,85 @@
     </section>
 
     <!-- ========================================================================
-         3. Devlogs & Blog View (Devlogs with images, write-ups & learnings)
+         3. Devlogs View (Auto-synced via RSS with Cover & Title, Links Externally)
          ======================================================================== -->
     <section id="blog" class="ts-panel" role="tabpanel" tabindex="0">
       <div class="ts-panel-top">
         <div>
-          <h2 class="ts-page-title">devlogs &amp; thoughts</h2>
-          <p class="ts-page-desc">Notes on game feel, physics experiments, and building indie games.</p>
+          <h2 class="ts-page-title">devlogs</h2>
+          <p class="ts-page-desc">Notes, experiments, and post-mortems on making games.</p>
         </div>
+
+        <a href="https://cholebhature-hehe.itch.io/" target="_blank" rel="noopener noreferrer" class="ts-ext-blog-btn">
+          <span>Read on itch.io</span> ↗
+        </a>
       </div>
 
-      <div class="ts-blogs-list">
-
-        <!-- Blog 1: The Last Train -->
-        <article class="ts-blog-card" data-blog-id="last-train">
+      <!-- Devlog Cards (Auto-synced via RSS feed in js/main.js) -->
+      <div id="blogPostsContainer" class="ts-blogs-list">
+        
+        <article class="ts-blog-card">
           <div class="ts-blog-thumb">
-            <img src="assets/images/projects/the-last-train.png" alt="The Last Train devlog banner" loading="lazy">
+            <img src="assets/images/projects/the-last-train.png" alt="The Last Train devlog" loading="lazy">
           </div>
           <div class="ts-blog-content">
             <div class="ts-blog-meta">
-              <span class="ts-tag clay">Combat Devlog</span>
-              <span class="ts-blog-date">Nov 2026 · 4 min read</span>
+              <span class="ts-blog-date">Nov 2026</span>
+              <span class="ts-link-sep">·</span>
+              <span class="ts-blog-tag">Combat Systems</span>
             </div>
             <h3 class="ts-blog-title">Building The Last Train: Fluid Aerial Blade Combos in Unity URP</h3>
             <p class="ts-blog-excerpt">
-              Designing hack-and-slash physics atop a hurtling train. How jump buffering, hitbox detection, and particle sparks make fast aerial combat feel punchy.
+              Designing snappy hack-and-slash combat atop a moving train. Jump buffering, hitstop frames, and parallax speed.
             </p>
             <div class="ts-blog-footer">
-              <button class="ts-read-btn" data-open-blog="last-train">Read Devlog →</button>
+              <a href="https://cholebhature-hehe.itch.io/the-last-train" target="_blank" rel="noopener noreferrer" class="ts-simple-link">
+                Read on itch.io ↗
+              </a>
             </div>
           </div>
         </article>
 
-        <!-- Blog 2: Time Traveler -->
-        <article class="ts-blog-card" data-blog-id="time-traveler">
+        <article class="ts-blog-card">
           <div class="ts-blog-thumb">
-            <img src="assets/images/projects/time-traveler.png" alt="Time Traveler devlog banner" loading="lazy">
+            <img src="assets/images/projects/time-traveler.png" alt="Time Traveler devlog" loading="lazy">
           </div>
           <div class="ts-blog-content">
             <div class="ts-blog-meta">
-              <span class="ts-tag honey">Hackathon Winner</span>
-              <span class="ts-blog-date">Oct 2026 · 5 min read</span>
+              <span class="ts-blog-date">Oct 2026</span>
+              <span class="ts-link-sep">·</span>
+              <span class="ts-blog-tag">Post-Mortem</span>
             </div>
             <h3 class="ts-blog-title">Time Traveler Post-Mortem: Designing Circular Temporal Puzzles</h3>
             <p class="ts-blog-excerpt">
-              How we won 1st place at Just a Hackathon with state rewinds and chronological clone playback without causing game-breaking paradoxes.
+              How we won 1st place at Just a Hackathon with state rewinds and deterministic clone loops without breaking game physics.
             </p>
             <div class="ts-blog-footer">
-              <button class="ts-read-btn" data-open-blog="time-traveler">Read Devlog →</button>
+              <a href="https://cholebhature-hehe.itch.io/time-traveler" target="_blank" rel="noopener noreferrer" class="ts-simple-link">
+                Read on itch.io ↗
+              </a>
             </div>
           </div>
         </article>
 
-        <!-- Blog 3: Nightmare -->
-        <article class="ts-blog-card" data-blog-id="nightmare">
+        <article class="ts-blog-card">
           <div class="ts-blog-thumb">
-            <img src="assets/images/projects/nightmare.png" alt="Nightmare devlog banner" loading="lazy">
+            <img src="assets/images/projects/nightmare.png" alt="Nightmare devlog" loading="lazy">
           </div>
           <div class="ts-blog-content">
             <div class="ts-blog-meta">
-              <span class="ts-tag sage">Art &amp; Design</span>
-              <span class="ts-blog-date">Sep 2026 · 3 min read</span>
+              <span class="ts-blog-date">Sep 2026</span>
+              <span class="ts-link-sep">·</span>
+              <span class="ts-blog-tag">Art Direction</span>
             </div>
             <h3 class="ts-blog-title">Atmospheric Silhouettes: Winning Best Art Direction at Geek-N-Jam</h3>
             <p class="ts-blog-excerpt">
-              Crafting a dark fantasy fairy tale atmosphere through multi-plane parallax depth, rim lighting, and handcrafted environmental hazards.
+              Creating eerie fairy tale atmospheres with 5-layer parallax, Unity 2D rim lighting, and environmental mist.
             </p>
             <div class="ts-blog-footer">
-              <button class="ts-read-btn" data-open-blog="nightmare">Read Devlog →</button>
+              <a href="https://surana-rishabh.itch.io/nightmare-a-fairy-tale" target="_blank" rel="noopener noreferrer" class="ts-simple-link">
+                Read on itch.io ↗
+              </a>
             </div>
           </div>
         </article>
@@ -562,43 +537,26 @@
   </main>
 
   <!-- ==========================================================================
-       Devlog Full Article Modal Reader
-       ========================================================================== -->
-  <div id="devlogModal" class="ts-modal-overlay hidden" aria-hidden="true">
-    <div class="ts-modal-card">
-      <button id="btnCloseModal" class="ts-modal-close" aria-label="Close article">✕</button>
-      <div id="devlogModalBody" class="ts-modal-body">
-        <!-- Injected dynamically via JavaScript -->
-      </div>
-    </div>
-  </div>
-
-  <!-- ==========================================================================
        Minimal Footer
        ========================================================================== -->
   <footer class="ts-footer">
     <div class="ts-container ts-footer-inner">
-      <span>Aaditya Raj · <span class="text-clay">cholebhature.me</span></span>
+      <div class="ts-footer-copy">
+        <span>© 2026 Aaditya Raj. Built with curiosity &amp; code.</span>
+      </div>
       <div class="ts-footer-links">
         <button data-tab-target="about">home</button>
         <span class="dot">·</span>
         <button data-tab-target="projects">projects</button>
         <span class="dot">·</span>
-        <button data-tab-target="blog">blog</button>
+        <button data-tab-target="blog">devlogs</button>
       </div>
     </div>
   </footer>
 
-  <!-- Three.js Library -->
-  <script src="js/libs/three.min.js"></script>
-  <script>
-    if (typeof THREE === 'undefined') {
-      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>');
-    }
-  </script>
-
   <!-- Scripts -->
-  <script src="js/game.js?v=7.0"></script>
-  <script src="js/main.js?v=7.0"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="js/game.js?v=8.0"></script>
+  <script src="js/main.js?v=8.0"></script>
 </body>
 </html>
